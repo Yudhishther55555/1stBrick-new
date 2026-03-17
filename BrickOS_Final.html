@@ -1,0 +1,1880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover,maximum-scale=1"/>
+<meta name="theme-color" content="#0a0508"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="BrickOS"/>
+<title>BrickOS — Construction Management System</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=Syne:wght@600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+/* ══════════════════════════════════════════════════════
+   BRICKOS DESIGN SYSTEM v3.0
+   Aesthetic: Molten Industrial Dark — Ember & Ore
+   Brand: Brick-red fire + molten gold + deep black
+   Typography: Bebas Neue (display) · Syne (UI) · DM Sans (body)
+   Unforgettable: Animated ember glow, precision dark UI,
+                  glowing role badges, premium card depths
+══════════════════════════════════════════════════════ */
+:root {
+  /* Core brand */
+  --br:   #C8341C;  /* Brick red primary */
+  --br2:  #8C2010;  /* Brick dark */
+  --br3:  #E8503A;  /* Brick light / hover */
+  --gold: #D4960A;  /* Molten gold */
+  --gld2: #F0B830;  /* Gold light */
+  --gld3: #8B6208;  /* Gold dark */
+  --lime: #1DB87A;  /* Success green */
+  --sky:  #1E7FD4;  /* Info blue */
+  --warn: #E07820;  /* Warning orange */
+  --err:  #D83030;  /* Error red */
+
+  /* Backgrounds — deep black layered */
+  --b0: #060408;   /* Deepest */
+  --b1: #0a0508;   /* App bg */
+  --b2: #100810;   /* Cards base */
+  --b3: #160e18;   /* Cards elevated */
+  --b4: #1e1422;   /* Cards top */
+  --b5: #261a2c;   /* Hover state */
+
+  /* Text */
+  --t1: #F2EEE8;   /* Primary */
+  --t2: #A8998A;   /* Secondary */
+  --t3: #6A5A50;   /* Muted */
+  --t4: #3A2A22;   /* Disabled */
+
+  /* Borders */
+  --bd:  rgba(255,255,255,.07);
+  --bd2: rgba(255,255,255,.12);
+  --bd-r:rgba(200,52,28,.3);
+  --bd-g:rgba(212,150,10,.25);
+
+  /* Shadows */
+  --sh1: 0 2px 10px rgba(0,0,0,.5);
+  --sh2: 0 8px 32px rgba(0,0,0,.65);
+  --sh3: 0 20px 64px rgba(0,0,0,.8);
+  --sh-r:0 8px 32px rgba(200,52,28,.3);
+  --sh-g:0 8px 32px rgba(212,150,10,.25);
+
+  /* Radii */
+  --r1:8px; --r2:14px; --r3:20px; --r4:30px;
+
+  /* Easing */
+  --ease:cubic-bezier(.4,0,.2,1);
+  --spring:cubic-bezier(.34,1.56,.64,1);
+  --t-fast:all .15s var(--ease);
+  --t-std:all .3s var(--ease);
+  --t-slow:all .5s var(--ease);
+}
+
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{height:100%;font-size:15px}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--b0);
+  color:var(--t1);
+  height:100%;
+  overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+  user-select:none;
+}
+h1,h2,h3,h4{font-family:'Bebas Neue',sans-serif;letter-spacing:.05em}
+button{cursor:pointer;border:none;outline:none;background:none;font-family:inherit}
+input,select,textarea{outline:none;font-family:inherit}
+
+/* ── PHONE SHELL ─────────────────────────────── */
+.shell{
+  width:393px;height:852px;
+  background:var(--b1);
+  border-radius:52px;
+  margin:14px auto;
+  position:relative;
+  overflow:hidden;
+  box-shadow:
+    0 0 0 11px #111,
+    0 0 0 13px #1a1a1a,
+    0 40px 100px rgba(0,0,0,.9),
+    inset 0 0 0 1px rgba(255,255,255,.07);
+}
+/* Dynamic Island */
+.di{
+  position:absolute;top:13px;left:50%;
+  transform:translateX(-50%);
+  width:122px;height:34px;
+  background:#000;
+  border-radius:22px;
+  z-index:1000;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.di-c{width:10px;height:10px;background:#0d0d0d;border-radius:50%;border:2px solid #222}
+.di-f{width:13px;height:13px;border:1.5px solid #222;border-radius:50%}
+/* Status bar */
+.sb{
+  position:absolute;top:0;left:0;right:0;height:54px;
+  display:flex;align-items:flex-end;justify-content:space-between;
+  padding:0 24px 9px;
+  z-index:99;
+  font-family:'Syne',sans-serif;font-size:.65rem;font-weight:700;
+  color:var(--t1);
+}
+
+/* ── APP CONTAINER ───────────────────────────── */
+.app{position:absolute;inset:0;display:flex;flex-direction:column;overflow:hidden}
+
+/* ── SCREENS ─────────────────────────────────── */
+.screen{
+  display:none;flex:1;
+  flex-direction:column;overflow:hidden;
+  background:var(--b1);
+}
+.screen.active{display:flex;animation:scIn .4s var(--ease) both}
+@keyframes scIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+
+/* ── TOP BAR ─────────────────────────────────── */
+.tbar{
+  padding:56px 18px 13px;
+  display:flex;align-items:center;justify-content:space-between;
+  flex-shrink:0;
+  background:var(--b1);
+  border-bottom:1px solid var(--bd);
+}
+.tbar-title{font-size:1.6rem;letter-spacing:.06em;line-height:1}
+.tbar-sub{font-family:'Syne',sans-serif;font-size:.58rem;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.18em;margin-top:.12rem}
+.iBtn{
+  width:35px;height:35px;border-radius:var(--r1);
+  background:var(--b4);border:1px solid var(--bd);
+  display:flex;align-items:center;justify-content:center;
+  font-size:.88rem;cursor:pointer;transition:var(--t-fast);
+}
+.iBtn:active{transform:scale(.88);background:var(--b5)}
+.ndot{position:absolute;top:7px;right:7px;width:7px;height:7px;background:var(--br);border-radius:50%;border:1.5px solid var(--b1)}
+
+/* ── SCROLL AREA ─────────────────────────────── */
+.sa{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:78px}
+.sa::-webkit-scrollbar{display:none}
+
+/* ── BOTTOM NAV ──────────────────────────────── */
+.bnav{
+  height:70px;
+  background:rgba(10,5,8,.97);
+  backdrop-filter:blur(24px);
+  border-top:1px solid var(--bd);
+  display:flex;align-items:stretch;
+  flex-shrink:0;position:relative;z-index:50;
+}
+.ni{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;transition:var(--t-fast);padding-top:3px;position:relative}
+.ni:active{transform:scale(.88)}
+.ni-ic{font-size:1.25rem;transition:var(--t-std);line-height:1}
+.ni-lb{font-family:'Syne',sans-serif;font-size:.56rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--t3);transition:var(--t-std)}
+.ni.on .ni-lb{color:var(--br)}
+.ni.on .ni-ic{transform:translateY(-2px) scale(1.14);filter:drop-shadow(0 0 8px rgba(200,52,28,.7))}
+.ni-ln{position:absolute;top:0;left:50%;transform:translateX(-50%);width:26px;height:2.5px;background:var(--br);border-radius:0 0 3px 3px;opacity:0;transition:var(--t-std)}
+.ni.on .ni-ln{opacity:1}
+.fab-w{flex:1;display:flex;align-items:center;justify-content:center}
+.fab{
+  width:52px;height:52px;
+  background:linear-gradient(135deg,var(--br),var(--br2));
+  border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.5rem;
+  box-shadow:var(--sh-r);
+  margin-top:-11px;cursor:pointer;
+  transition:var(--t-fast);
+}
+.fab:active{transform:scale(.88)}
+
+/* ── ROLE SELECT SCREEN ──────────────────────── */
+.role-screen{
+  position:absolute;inset:0;z-index:300;
+  background:linear-gradient(175deg,var(--b1) 0%,#1a0510 50%,var(--b0) 100%);
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:28px;
+  overflow:hidden;
+}
+/* Ember particle background */
+.embers{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.ember{
+  position:absolute;bottom:-10px;
+  width:3px;height:3px;
+  background:var(--br);
+  border-radius:50%;
+  filter:blur(1px);
+  animation:emberRise var(--dur) ease-in infinite;
+  animation-delay:var(--del);
+  left:var(--lft);
+}
+@keyframes emberRise{
+  0%{opacity:0;transform:translateY(0) scale(1)}
+  20%{opacity:.9}
+  80%{opacity:.5}
+  100%{opacity:0;transform:translateY(-500px) scale(.3) translateX(var(--dx))}
+}
+.brand-logo{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:3.2rem;letter-spacing:.15em;
+  line-height:1;text-align:center;
+  background:linear-gradient(135deg,var(--t1) 0%,#D4960A 60%,var(--br) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  filter:drop-shadow(0 0 30px rgba(200,52,28,.4));
+  position:relative;z-index:1;
+  margin-bottom:4px;
+}
+.brand-sub{
+  font-family:'Syne',sans-serif;font-size:.68rem;font-weight:700;
+  text-transform:uppercase;letter-spacing:.28em;
+  color:var(--t3);
+  position:relative;z-index:1;
+  margin-bottom:28px;
+}
+.role-card{
+  width:100%;
+  background:var(--b3);
+  border:1px solid var(--bd2);
+  border-radius:var(--r3);
+  padding:17px;
+  display:flex;align-items:center;gap:14px;
+  cursor:pointer;
+  transition:var(--t-std);
+  position:relative;z-index:1;
+  margin-bottom:10px;
+  overflow:hidden;
+}
+.role-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity .3s;background:linear-gradient(135deg,rgba(200,52,28,.08),transparent)}
+.role-card:active{transform:scale(.97)}
+.role-card:active::before{opacity:1}
+.role-card.r-super{border-color:rgba(200,52,28,.35)}
+.role-card.r-admin{border-color:rgba(212,150,10,.3)}
+.role-card.r-client{border-color:rgba(29,184,122,.28)}
+.role-ico{width:50px;height:50px;border-radius:var(--r2);display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0}
+.role-name{font-family:'Syne',sans-serif;font-weight:800;font-size:.92rem}
+.role-desc{font-size:.72rem;color:var(--t3);margin-top:2px;line-height:1.4}
+
+/* ── ROLE BADGE ──────────────────────────────── */
+.rbadge{font-family:'Syne',sans-serif;font-size:.56rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;padding:.18rem .58rem;border-radius:20px}
+.rb-s{background:rgba(200,52,28,.2);color:#f08070;border:1px solid rgba(200,52,28,.35)}
+.rb-a{background:rgba(212,150,10,.18);color:#f0c040;border:1px solid rgba(212,150,10,.3)}
+.rb-c{background:rgba(29,184,122,.15);color:#5de8aa;border:1px solid rgba(29,184,122,.28)}
+
+/* ── CHIPS / BADGES ──────────────────────────── */
+.chip{font-family:'Syne',sans-serif;font-size:.57rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;padding:.15rem .5rem;border-radius:20px;white-space:nowrap}
+.c-red{background:rgba(200,52,28,.16);color:#f08070;border:1px solid rgba(200,52,28,.3)}
+.c-gold{background:rgba(212,150,10,.15);color:#f0c040;border:1px solid rgba(212,150,10,.28)}
+.c-lime{background:rgba(29,184,122,.14);color:#5de8aa;border:1px solid rgba(29,184,122,.26)}
+.c-sky{background:rgba(30,127,212,.16);color:#70b8f8;border:1px solid rgba(30,127,212,.3)}
+.c-warn{background:rgba(224,120,32,.15);color:#f0a060;border:1px solid rgba(224,120,32,.28)}
+.c-gray{background:rgba(255,255,255,.07);color:var(--t2);border:1px solid var(--bd)}
+
+/* ── CARDS ───────────────────────────────────── */
+.card{background:var(--b3);border:1px solid var(--bd);border-radius:var(--r2);overflow:hidden;transition:var(--t-fast)}
+.card:active{transform:scale(.985)}
+.cp{padding:15px}
+
+/* ── PROGRESS BARS ───────────────────────────── */
+.pb{height:5px;background:rgba(255,255,255,.07);border-radius:3px;overflow:hidden}
+.pbf{height:100%;border-radius:3px;transition:width 1.4s var(--ease)}
+
+/* ── STAT CARDS ──────────────────────────────── */
+.sc{background:var(--b3);border:1px solid var(--bd);border-radius:var(--r2);padding:13px;position:relative;overflow:hidden}
+.sc::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.sc.sr::before{background:linear-gradient(90deg,var(--br),transparent)}
+.sc.sg::before{background:linear-gradient(90deg,var(--gold),transparent)}
+.sc.sl::before{background:linear-gradient(90deg,var(--lime),transparent)}
+.sc.sb::before{background:linear-gradient(90deg,var(--sky),transparent)}
+.sc.sw::before{background:linear-gradient(90deg,var(--warn),transparent)}
+.sv{font-family:'Bebas Neue',sans-serif;font-size:1.85rem;line-height:1;margin:6px 0 2px}
+.sl-{font-family:'Syne',sans-serif;font-size:.57rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--t3)}
+.sn{font-family:'Syne',sans-serif;font-size:.6rem;font-weight:600;margin-top:2px}
+.sn.up{color:var(--lime)}.sn.dn{color:var(--err)}
+
+/* ── SECTION LABEL ───────────────────────────── */
+.slbl{font-family:'Syne',sans-serif;font-size:.6rem;font-weight:800;text-transform:uppercase;letter-spacing:.2em;color:var(--t3);padding:16px 16px 7px;display:flex;align-items:center;justify-content:space-between}
+.slbl a{font-size:.57rem;color:var(--br3);letter-spacing:.05em;cursor:pointer;font-weight:700;text-transform:none}
+
+/* ── INPUT FIELDS ────────────────────────────── */
+.inp{width:100%;background:var(--b4);border:1px solid var(--bd2);color:var(--t1);padding:.72rem 1rem;border-radius:var(--r1);font-size:.88rem;transition:border-color .2s,background .2s}
+.inp:focus{border-color:var(--br);background:rgba(200,52,28,.06)}
+.inp::placeholder{color:var(--t3)}
+select.inp option{background:var(--b2)}
+textarea.inp{resize:none;line-height:1.5}
+.fg{margin-bottom:13px}
+.fl{font-family:'Syne',sans-serif;font-size:.64rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--t3);margin-bottom:5px;display:block}
+
+/* ── BOTTOM SHEETS ───────────────────────────── */
+.sov{display:none;position:absolute;inset:0;background:rgba(0,0,0,.7);z-index:200;align-items:flex-end;backdrop-filter:blur(6px)}
+.sov.open{display:flex}
+.sht{width:100%;background:var(--b2);border-radius:var(--r4) var(--r4) 0 0;padding:10px 18px 32px;max-height:84%;overflow-y:auto;animation:shtUp .38s var(--spring) both;border-top:1px solid var(--bd2)}
+@keyframes shtUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.shdl{width:36px;height:4px;background:var(--bd2);border-radius:2px;margin:0 auto 15px}
+.sh-t{font-size:1.25rem;margin-bottom:3px}
+.sh-s{font-size:.78rem;color:var(--t3);margin-bottom:18px;line-height:1.4}
+
+/* ── TOAST ───────────────────────────────────── */
+.toast{
+  position:absolute;top:68px;left:14px;right:14px;
+  background:var(--b4);border:1px solid rgba(29,184,122,.3);
+  border-radius:var(--r1);
+  padding:.68rem 1rem;
+  font-family:'Syne',sans-serif;font-size:.72rem;font-weight:700;
+  color:var(--lime);z-index:600;
+  display:flex;align-items:center;gap:.5rem;
+  box-shadow:var(--sh2);
+  opacity:0;transition:opacity .3s;pointer-events:none;
+}
+.toast.show{opacity:1}
+
+/* ── BUTTONS ─────────────────────────────────── */
+.btnP{width:100%;padding:.82rem;background:linear-gradient(135deg,var(--br),var(--br2));color:#fff;border-radius:var(--r1);font-family:'Syne',sans-serif;font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;box-shadow:var(--sh-r);transition:var(--t-fast)}
+.btnP:active{transform:scale(.97);opacity:.9}
+.btnG{width:100%;padding:.78rem;background:linear-gradient(135deg,var(--gold),var(--gld3));color:#000;border-radius:var(--r1);font-family:'Syne',sans-serif;font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;box-shadow:var(--sh-g);transition:var(--t-fast)}
+.btnG:active{transform:scale(.97)}
+.btnL{width:100%;padding:.76rem;background:linear-gradient(135deg,var(--lime),#0a7a48);color:#fff;border-radius:var(--r1);font-family:'Syne',sans-serif;font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;transition:var(--t-fast)}
+.btnL:active{transform:scale(.97)}
+.btnS{width:100%;padding:.72rem;background:var(--b4);color:var(--t2);border:1px solid var(--bd2);border-radius:var(--r1);font-family:'Syne',sans-serif;font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;transition:var(--t-fast)}
+.btnS:active{transform:scale(.97)}
+
+/* ── AVATAR ──────────────────────────────────── */
+.av{border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;flex-shrink:0;letter-spacing:0}
+
+/* ── LIST ITEMS ──────────────────────────────── */
+.li{display:flex;align-items:center;gap:11px;padding:12px 15px;border-bottom:1px solid var(--bd);cursor:pointer;transition:var(--t-fast)}
+.li:last-child{border:none}
+.li:active{background:rgba(255,255,255,.03)}
+.li-ic{width:38px;height:38px;border-radius:var(--r1);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+.li-c{flex:1;min-width:0}
+.li-t{font-family:'Syne',sans-serif;font-weight:700;font-size:.8rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.li-s{font-size:.7rem;color:var(--t3);margin-top:.1rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.li-r{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0}
+
+/* ── MILESTONE ROWS ──────────────────────────── */
+.mr{display:flex;gap:11px;padding:11px 0;border-bottom:1px solid rgba(255,255,255,.04);align-items:flex-start}
+.mr:last-child{border:none}
+.mdot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.78rem;flex-shrink:0;margin-top:1px}
+.md-done{background:rgba(29,184,122,.14);border:2px solid var(--lime);color:var(--lime)}
+.md-active{background:rgba(200,52,28,.14);border:2px solid var(--br);color:var(--br);animation:mPulse 2s infinite}
+.md-delay{background:rgba(216,48,48,.12);border:2px solid var(--err);color:var(--err)}
+.md-pend{background:rgba(255,255,255,.04);border:2px solid var(--bd2);color:var(--t3)}
+@keyframes mPulse{0%,100%{box-shadow:0 0 0 0 rgba(200,52,28,.5)}50%{box-shadow:0 0 0 7px rgba(200,52,28,0)}}
+.mt-{font-family:'Syne',sans-serif;font-weight:700;font-size:.8rem;margin-bottom:.12rem}
+.md-{font-size:.7rem;color:var(--t3);line-height:1.4}
+.mdate{font-family:'Space Mono',monospace;font-size:.6rem;flex-shrink:0;min-width:58px;text-align:right;margin-top:2px}
+.mok{color:var(--lime)}.mdue{color:var(--gold)}
+
+/* ── ISSUE CARDS ──────────────────────────────── */
+.iss{background:var(--b3);border:1px solid var(--bd);border-radius:var(--r2);padding:13px;margin:0 14px 9px;cursor:pointer;transition:var(--t-fast)}
+.iss:active{transform:scale(.98)}
+.iss.hi{border-left:3px solid var(--err)}
+.iss.md{border-left:3px solid var(--warn)}
+.iss.lo{border-left:3px solid var(--lime)}
+.iss-t{font-family:'Syne',sans-serif;font-weight:700;font-size:.8rem;margin-bottom:.22rem}
+.iss-d{font-size:.72rem;color:var(--t3);line-height:1.4;margin-bottom:.55rem}
+
+/* ── WORKER CARD ─────────────────────────────── */
+.wcrd{display:flex;align-items:center;gap:11px;padding:11px 14px;border-bottom:1px solid var(--bd)}
+.wcrd:last-child{border:none}
+.att-btn{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:.6rem;font-weight:700;cursor:pointer;transition:var(--t-fast);flex-shrink:0;border:2px solid transparent}
+.att-btn:active{transform:scale(.82)}
+.att-P{background:rgba(29,184,122,.18);border-color:var(--lime);color:var(--lime)}
+.att-A{background:rgba(216,48,48,.14);border-color:var(--err);color:var(--err)}
+.att-H{background:rgba(224,120,32,.14);border-color:var(--warn);color:var(--warn)}
+
+/* ── VENDOR CARD ─────────────────────────────── */
+.vcrd{background:var(--b3);border:1px solid var(--bd);border-radius:var(--r2);padding:13px;margin:0 14px 9px;cursor:pointer;transition:var(--t-fast)}
+.vcrd:active{transform:scale(.98)}
+
+/* ── TASK CARD ───────────────────────────────── */
+.tcrd{background:var(--b3);border:1px solid var(--bd);border-radius:var(--r2);padding:13px;margin:0 14px 9px;cursor:pointer;transition:var(--t-fast)}
+.tcrd:active{transform:scale(.98)}
+.tcrd.done{opacity:.6}
+
+/* ── PAYMENT CARD ────────────────────────────── */
+.pcrd{background:var(--b3);border:1px solid var(--bd);border-radius:var(--r2);padding:14px;margin:0 14px 9px}
+
+/* ── AMENDMENT CARD ──────────────────────────── */
+.amd{background:var(--b3);border:1px solid var(--bd);border-left:3px solid var(--gold);border-radius:var(--r2);padding:13px;margin:0 14px 9px;cursor:pointer;transition:var(--t-fast)}
+.amd:active{transform:scale(.98)}
+
+/* ── DOC CARD ────────────────────────────────── */
+.dcard{display:flex;align-items:center;gap:11px;padding:12px 14px;border-bottom:1px solid var(--bd);cursor:pointer;transition:var(--t-fast)}
+.dcard:active{background:rgba(255,255,255,.03)}
+.dcard:last-child{border:none}
+
+/* ── LIVE CHAT ───────────────────────────────── */
+.msg{display:flex;gap:9px;padding:9px 14px;align-items:flex-end}
+.msg.me{flex-direction:row-reverse}
+.bubble{max-width:72%;padding:.6rem .85rem;border-radius:14px;font-size:.8rem;line-height:1.5}
+.b-from{background:var(--b4);border-radius:4px 14px 14px 14px;border:1px solid var(--bd)}
+.b-me{background:linear-gradient(135deg,var(--br),var(--br2));border-radius:14px 4px 14px 14px}
+.msg-t{font-family:'Space Mono',monospace;font-size:.56rem;color:var(--t3);flex-shrink:0;padding-bottom:4px}
+.live-ind{display:inline-flex;align-items:center;gap:5px;font-family:'Syne',sans-serif;font-size:.58rem;font-weight:700;color:var(--err);text-transform:uppercase;letter-spacing:.08em}
+.live-dot{width:7px;height:7px;background:var(--err);border-radius:50%;animation:ldot 1.2s ease-in-out infinite}
+@keyframes ldot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.6)}}
+
+/* ── DONUT CHART ─────────────────────────────── */
+.donut{width:92px;height:92px;position:relative;flex-shrink:0}
+.donut svg{transform:rotate(-90deg)}
+.dc{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.dv{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;line-height:1}
+.dl{font-size:.52rem;font-family:'Syne',sans-serif;color:var(--t3);text-transform:uppercase;letter-spacing:.08em}
+
+/* ── GANTT CHART ─────────────────────────────── */
+.gantt-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:6px}
+.gantt-scroll::-webkit-scrollbar{height:3px}
+.gantt-scroll::-webkit-scrollbar-track{background:var(--b4)}
+.gantt-scroll::-webkit-scrollbar-thumb{background:var(--br);border-radius:2px}
+
+/* ── KNOWLEDGE CARD ──────────────────────────── */
+.kcard{background:var(--b3);border:1px solid var(--bd);border-radius:var(--r2);padding:13px;margin:0 14px 9px;cursor:pointer;transition:var(--t-fast)}
+.kcard:active{transform:scale(.98)}
+
+/* ── TOGGLE BAR ──────────────────────────────── */
+.tglbar{display:flex;background:var(--b4);border-radius:var(--r1);padding:3px;gap:2px;margin:0 14px 12px}
+.tgl{flex:1;padding:.42rem;text-align:center;border-radius:6px;font-family:'Syne',sans-serif;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);cursor:pointer;transition:var(--t-fast)}
+.tgl.on{background:var(--br);color:#fff;box-shadow:var(--sh-r)}
+
+/* ── SWITCH ──────────────────────────────────── */
+.sw{width:42px;height:24px;background:var(--b5);border-radius:12px;position:relative;transition:background .2s;cursor:pointer;border:1px solid var(--bd2);flex-shrink:0}
+.sw.on{background:var(--lime);border-color:var(--lime)}
+.sw::after{content:'';position:absolute;width:18px;height:18px;background:#fff;border-radius:50%;top:2px;left:2px;transition:left .2s var(--spring);box-shadow:var(--sh1)}
+.sw.on::after{left:20px}
+
+/* ── SETTINGS ROWS ───────────────────────────── */
+.srow{display:flex;align-items:center;justify-content:space-between;padding:13px 14px;border-bottom:1px solid var(--bd);cursor:pointer;transition:var(--t-fast)}
+.srow:last-child{border:none}
+.srow:active{background:rgba(255,255,255,.03)}
+.srow-t{font-family:'Syne',sans-serif;font-size:.8rem;font-weight:700}
+.srow-s{font-size:.7rem;color:var(--t3);margin-top:.1rem}
+
+/* ── HERO PROJECT CARD ───────────────────────── */
+.hero-card{
+  margin:12px 14px 0;
+  background:var(--b3);
+  border:1px solid var(--bd-r);
+  border-radius:var(--r3);
+  padding:18px;
+  position:relative;overflow:hidden;
+  cursor:pointer;
+}
+.hero-card::before{
+  content:'';position:absolute;
+  top:-50px;right:-50px;
+  width:160px;height:160px;
+  background:rgba(200,52,28,.12);
+  border-radius:50%;filter:blur(40px);
+  pointer-events:none;
+}
+.hero-card::after{
+  content:'';position:absolute;
+  bottom:-40px;left:20%;
+  width:100px;height:100px;
+  background:rgba(212,150,10,.08);
+  border-radius:50%;filter:blur(30px);
+  pointer-events:none;
+}
+
+/* ── WELCOME BANNER ──────────────────────────── */
+.welcome-banner{
+  margin:10px 14px 0;
+  background:linear-gradient(135deg,#1a0408 0%,#2a0c10 50%,#1a0408 100%);
+  border:1px solid rgba(200,52,28,.2);
+  border-radius:var(--r3);
+  padding:18px;
+  position:relative;overflow:hidden;
+}
+.welcome-banner::before{
+  content:'';position:absolute;inset:0;
+  background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23C8341C' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  pointer-events:none;
+}
+
+/* ── QUICK ACTIONS ───────────────────────────── */
+.qa-row{display:flex;gap:9px;padding:0 14px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.qa-row::-webkit-scrollbar{display:none}
+.qa-item{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer}
+.qa-btn{width:52px;height:52px;border-radius:var(--r2);display:flex;align-items:center;justify-content:center;font-size:1.3rem;border:1px solid var(--bd);transition:var(--t-fast)}
+.qa-btn:active{transform:scale(.86)}
+.qa-lbl{font-family:'Syne',sans-serif;font-size:.55rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--t3);text-align:center;line-height:1.2}
+
+/* ── ACTIVITY ITEM ───────────────────────────── */
+.act{display:flex;gap:10px;padding:10px 14px;align-items:flex-start;border-bottom:1px solid rgba(255,255,255,.04)}
+.act:last-child{border:none}
+.act-ic{width:32px;height:32px;border-radius:var(--r1);display:flex;align-items:center;justify-content:center;font-size:.88rem;flex-shrink:0}
+.act-t{font-size:.78rem;line-height:1.5;color:var(--t2);flex:1}
+.act-t b{color:var(--t1);font-family:'Syne',sans-serif;font-weight:700}
+.act-time{font-family:'Space Mono',monospace;font-size:.6rem;color:var(--t3);flex-shrink:0;margin-top:1px}
+
+/* ── WEATHER CARD ────────────────────────────── */
+.weather{
+  background:linear-gradient(135deg,#0a1428,#0f2040,#0a1428);
+  border:1px solid rgba(30,127,212,.2);
+  border-radius:var(--r2);padding:13px;
+  display:flex;align-items:center;gap:13px;
+}
+
+/* ── AI ALERT CARD ───────────────────────────── */
+.ai-alert{
+  background:linear-gradient(135deg,rgba(200,52,28,.07),rgba(212,150,10,.06));
+  border:1px solid rgba(212,150,10,.2);
+  border-radius:var(--r2);padding:13px;
+  margin:0 14px;
+  display:flex;gap:11px;align-items:flex-start;
+}
+.ai-title{font-family:'Syne',sans-serif;font-weight:800;font-size:.74rem;color:var(--gld2);margin-bottom:.18rem}
+.ai-text{font-size:.72rem;color:var(--t2);line-height:1.45}
+
+/* ── SEARCH BAR ──────────────────────────────── */
+.sw-wrap{position:relative;margin:0 14px 11px}
+.sw-ic{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:.9rem;color:var(--t3);pointer-events:none}
+.sw-inp{background:var(--b4);border:1px solid var(--bd2);color:var(--t1);padding:.58rem 1rem .58rem 2.5rem;border-radius:var(--r2);font-size:.84rem;width:100%}
+
+/* ── NOTIFICATION ITEM ───────────────────────── */
+.notif{display:flex;gap:10px;padding:12px 14px;border-bottom:1px solid var(--bd)}
+.notif:last-child{border:none}
+.notif-txt{font-size:.78rem;line-height:1.5;color:var(--t2);flex:1}
+.notif-txt strong{color:var(--t1);font-family:'Syne',sans-serif;font-size:.8rem}
+.notif-time{font-family:'Space Mono',monospace;font-size:.6rem;color:var(--t3);margin-top:.15rem}
+
+/* ── CLIENT DASHBOARD TILES ──────────────────── */
+.cl-tile{background:var(--b3);border:1px solid var(--bd);border-radius:var(--r2);padding:14px;cursor:pointer;transition:var(--t-fast);text-align:center}
+.cl-tile:active{transform:scale(.96)}
+.cl-tile-ic{font-size:1.4rem;margin-bottom:6px}
+.cl-tile-t{font-family:'Syne',sans-serif;font-size:.65rem;font-weight:700;line-height:1.3}
+
+/* ── HANDOVER CHECKLIST ──────────────────────── */
+.hv-item{display:flex;align-items:center;gap:11px;padding:12px 14px;border-bottom:1px solid var(--bd);cursor:pointer;transition:var(--t-fast)}
+.hv-item:active{background:rgba(255,255,255,.03)}
+.hv-item:last-child{border:none}
+.hv-chk{width:22px;height:22px;border-radius:50%;border:2px solid var(--bd2);display:flex;align-items:center;justify-content:center;font-size:.65rem;flex-shrink:0;transition:var(--t-std)}
+.hv-chk.done{background:rgba(29,184,122,.2);border-color:var(--lime);color:var(--lime)}
+
+/* ── MOBILE RESPONSIVE ───────────────────────── */
+@media(max-width:410px){
+  .shell{width:100vw;height:100svh;border-radius:0;margin:0;box-shadow:none}
+}
+</style>
+</head>
+
+<body>
+<div class="shell" id="appShell">
+
+  <!-- Dynamic Island -->
+  <div class="di"><div class="di-c"></div><div class="di-f"></div></div>
+  <!-- Status Bar -->
+  <div class="sb">
+    <div style="font-size:.82rem;font-family:'Space Mono',monospace" id="sTime">9:41</div>
+    <div style="display:flex;gap:5px;font-size:.62rem">●●● WiFi 🔋</div>
+  </div>
+  <!-- Toast -->
+  <div class="toast" id="toast">✅</div>
+
+  <!-- ══════════════════════════════════════════
+       ROLE LOGIN SCREEN
+  ══════════════════════════════════════════ -->
+  <div class="role-screen" id="roleScreen">
+    <!-- Ember particles -->
+    <div class="embers" id="embers"></div>
+    <div class="brand-logo">BRICKOS</div>
+    <div class="brand-sub">Construction Management System</div>
+    <div style="font-family:'Syne',sans-serif;font-size:.7rem;color:var(--t3);margin-bottom:14px;position:relative;z-index:1">Select your role to continue</div>
+    <div class="role-card r-super" onclick="setRole('super')">
+      <div class="role-ico" style="background:rgba(200,52,28,.15)">👑</div>
+      <div style="flex:1"><div class="role-name">Super Admin</div><div class="role-desc">Full platform control · All projects · All clients · All data</div></div>
+      <span class="rbadge rb-s">SUPER</span>
+    </div>
+    <div class="role-card r-admin" onclick="setRole('admin')">
+      <div class="role-ico" style="background:rgba(212,150,10,.12)">🏗️</div>
+      <div style="flex:1"><div class="role-name">Contractor / Admin</div><div class="role-desc">Manage execution · Teams · Vendors · Tasks · QC</div></div>
+      <span class="rbadge rb-a">ADMIN</span>
+    </div>
+    <div class="role-card r-client" onclick="setRole('client')">
+      <div class="role-ico" style="background:rgba(29,184,122,.1)">👤</div>
+      <div style="flex:1"><div class="role-name">Client</div><div class="role-desc">Track your project · Payments · Live wall · Documents</div></div>
+      <span class="rbadge rb-c">CLIENT</span>
+    </div>
+    <div style="position:absolute;bottom:32px;font-family:'Syne',sans-serif;font-size:.6rem;color:var(--t3);text-align:center;letter-spacing:.12em;text-transform:uppercase;z-index:1">Version 3.2.1 · India's #1 Construction OS</div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       MAIN APP
+  ══════════════════════════════════════════ -->
+  <div class="app" id="mainApp" style="display:none">
+
+    <!-- ╔════════════════════════════════════╗
+         ║  SCREEN: DASHBOARD                 ║
+         ╚════════════════════════════════════╝ -->
+    <div class="screen active" id="sc-dash">
+      <div class="tbar" style="border:none;background:var(--b1);padding-bottom:10px">
+        <div><div class="tbar-title" id="dTitle">BrickOS</div><div class="tbar-sub" id="dSub">Super Admin</div></div>
+        <div style="display:flex;gap:8px">
+          <div class="iBtn" style="position:relative" onclick="goTo('notifications')">🔔<div class="ndot"></div></div>
+          <div class="av" id="dAv" style="width:35px;height:35px;font-size:.75rem;border-radius:var(--r1);cursor:pointer;background:linear-gradient(135deg,var(--br2),var(--br))" onclick="goTo('settings')">SA</div>
+        </div>
+      </div>
+      <div class="sa">
+        <!-- Welcome Banner -->
+        <div class="welcome-banner">
+          <div style="font-family:'Syne',sans-serif;font-size:.62rem;font-weight:700;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.15em" id="greeting">Good Morning 🌤</div>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:1.8rem;margin:.2rem 0;position:relative;z-index:1" id="dName">Admin User</div>
+          <div style="font-size:.74rem;color:rgba(255,255,255,.55);position:relative;z-index:1" id="dRole">Super Admin · BrickOS</div>
+          <div style="position:absolute;right:16px;bottom:14px;text-align:right;z-index:1">
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:2.4rem;line-height:1;color:rgba(200,52,28,.9)" id="pCount">3</div>
+            <div style="font-family:'Syne',sans-serif;font-size:.56rem;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.1em">Live<br>Projects</div>
+          </div>
+        </div>
+
+        <!-- KPI Stats -->
+        <div class="slbl" style="padding-top:14px">Overview <a onclick="goTo('reports')">Reports →</a></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;padding:0 14px">
+          <div class="sc sr"><div style="font-size:.95rem">🏗️</div><div class="sv" data-count="3" data-sfx="">0</div><div class="sl-">Active Projects</div><div class="sn up">↑ 1 this month</div></div>
+          <div class="sc sg"><div style="font-size:.95rem">👷</div><div class="sv" data-count="84" data-sfx="">0</div><div class="sl-">Workers On-site</div><div class="sn up">↑ 12 today</div></div>
+          <div class="sc sw"><div style="font-size:.95rem">⚠️</div><div class="sv" data-count="5" data-sfx="">0</div><div class="sl-">Open Issues</div><div class="sn dn">2 critical</div></div>
+          <div class="sc sl"><div style="font-size:.95rem">✅</div><div class="sv" data-count="12" data-sfx="">0</div><div class="sl-">Pending Tasks</div><div class="sn">4 due today</div></div>
+        </div>
+
+        <!-- Active Project Hero Card -->
+        <div class="slbl">Active Project <a onclick="goTo('projects')">Switch →</a></div>
+        <div class="hero-card" onclick="goTo('proj-detail')" style="position:relative">
+          <div style="font-family:'Syne',sans-serif;font-size:.62rem;font-weight:700;color:var(--br3);text-transform:uppercase;letter-spacing:.12em;position:relative;z-index:1">📍 Phase 4 — RCC Structure</div>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:1.5rem;margin:.25rem 0;position:relative;z-index:1">Greenfield Villa, Pune</div>
+          <div style="font-size:.73rem;color:var(--t3);margin-bottom:13px;position:relative;z-index:1">CLIENT-1 · G+2 Residential · 3,800 sqft</div>
+          <div style="display:flex;justify-content:space-between;font-family:'Syne',sans-serif;font-size:.66rem;margin-bottom:6px;position:relative;z-index:1"><span style="color:var(--t3)">Overall Progress</span><span style="color:var(--br3);font-weight:700">34%</span></div>
+          <div class="pb" style="height:7px;position:relative;z-index:1"><div class="pbf" id="heroProgFill" style="width:34%;background:linear-gradient(90deg,var(--br),var(--gold))"></div></div>
+          <div style="display:flex;gap:18px;margin-top:13px;position:relative;z-index:1">
+            <div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.15rem;color:var(--br)">34%</div><div style="font-family:'Syne',sans-serif;font-size:.56rem;color:var(--t3)">Complete</div></div>
+            <div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.15rem">118</div><div style="font-family:'Syne',sans-serif;font-size:.56rem;color:var(--t3)">Days Left</div></div>
+            <div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.15rem;color:var(--lime)">24</div><div style="font-family:'Syne',sans-serif;font-size:.56rem;color:var(--t3)">Workers</div></div>
+            <div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.15rem;color:var(--gold)">₹42L</div><div style="font-family:'Syne',sans-serif;font-size:.56rem;color:var(--t3)">Spent</div></div>
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="slbl" style="padding-top:14px">Quick Actions</div>
+        <div class="qa-row">
+          <div class="qa-item" onclick="openSht('issueSht')"><div class="qa-btn" style="background:rgba(200,52,28,.12);border-color:rgba(200,52,28,.28)">⚠️</div><div class="qa-lbl">Report<br>Issue</div></div>
+          <div class="qa-item" onclick="openSht('taskRepSht')"><div class="qa-btn" style="background:rgba(212,150,10,.1);border-color:rgba(212,150,10,.25)">📸</div><div class="qa-lbl">Task<br>Report</div></div>
+          <div class="qa-item" onclick="goTo('team')"><div class="qa-btn" style="background:rgba(29,184,122,.1);border-color:rgba(29,184,122,.25)">✅</div><div class="qa-lbl">Mark<br>Attend.</div></div>
+          <div class="qa-item" onclick="openSht('amdSht')"><div class="qa-btn" style="background:rgba(212,150,10,.1);border-color:rgba(212,150,10,.25)">📝</div><div class="qa-lbl">Amend-<br>ment</div></div>
+          <div class="qa-item" onclick="goTo('vendors')"><div class="qa-btn" style="background:rgba(30,127,212,.1);border-color:rgba(30,127,212,.25)">🚚</div><div class="qa-lbl">Vendors<br>Supply</div></div>
+          <div class="qa-item" onclick="goTo('live-wall')"><div class="qa-btn" style="background:rgba(200,52,28,.12);border-color:rgba(200,52,28,.3)">🔴</div><div class="qa-lbl">Live<br>Wall</div></div>
+        </div>
+
+        <!-- AI Alert -->
+        <div style="padding:12px 0">
+          <div class="ai-alert">
+            <div style="font-size:1.4rem;flex-shrink:0">🤖</div>
+            <div><div class="ai-title">AI Quality Alert — High Priority</div><div class="ai-text">Concrete honeycomb detected on Column C4, Greenfield Villa. Schedule inspection before next pour to prevent structural compromise.</div><div style="margin-top:9px;display:flex;gap:8px"><button class="chip c-red" style="cursor:pointer" onclick="goTo('issues')">View Issue →</button><button class="chip c-gray" style="cursor:pointer" onclick="this.closest('.ai-alert').style.display='none'">Dismiss</button></div></div>
+          </div>
+        </div>
+
+        <!-- Weather -->
+        <div style="padding:0 14px 12px">
+          <div class="weather">
+            <div style="font-size:2.4rem">⛅</div>
+            <div style="flex:1"><div style="font-family:'Bebas Neue',sans-serif;font-size:1.9rem;line-height:1">28°C</div><div style="font-family:'Syne',sans-serif;font-size:.62rem;color:rgba(255,255,255,.65);text-transform:uppercase;letter-spacing:.08em">Partly Cloudy · Pune Site</div><div style="font-size:.7rem;color:rgba(255,255,255,.45);margin-top:.2rem">💧 62% · 💨 12km/h · ✅ Safe to Work</div></div>
+            <div style="text-align:right"><div style="font-family:'Syne',sans-serif;font-size:.58rem;color:rgba(255,255,255,.4)">Tomorrow</div><div style="font-size:1.2rem;margin-top:2px">🌦️ 26°C</div></div>
+          </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="slbl" style="padding-top:0">Today's Activity</div>
+        <div class="card" style="margin:0 14px 14px;border-radius:var(--r2)">
+          <div class="act"><div class="act-ic" style="background:rgba(200,52,28,.12)">🧱</div><div class="act-t"><b>Column Casting — Zone B</b><br>5 RCC columns poured. Cube samples sent for testing.</div><div class="act-time">08:30</div></div>
+          <div class="act"><div class="act-ic" style="background:rgba(212,150,10,.1)">📦</div><div class="act-t"><b>Material Delivery</b><br>12 MT TMT Steel 12mm received from Venus Steel.</div><div class="act-time">10:15</div></div>
+          <div class="act"><div class="act-ic" style="background:rgba(29,184,122,.1)">📸</div><div class="act-t"><b>18 Photos Uploaded</b><br>Daily progress log by Site Engineer Suresh Patel.</div><div class="act-time">12:00</div></div>
+          <div class="act"><div class="act-ic" style="background:rgba(30,127,212,.1)">💳</div><div class="act-t"><b>Invoice Approved</b><br>Labour payment ₹2,24,000 — Week 1 January.</div><div class="act-time">14:30</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ╔════════════════════════════════════╗
+         ║  SCREEN: PROJECTS LIST             ║
+         ╚════════════════════════════════════╝ -->
+    <div class="screen" id="sc-projects">
+      <div class="tbar"><div><div class="tbar-title">Projects</div><div class="tbar-sub">4 Total · 3 Active</div></div><div style="display:flex;gap:8px"><div class="iBtn" onclick="openSht('newProjSht')">＋</div></div></div>
+      <div class="sa">
+        <div style="padding:10px 14px 0"><div class="tglbar"><div class="tgl on" onclick="tgl(this)">All</div><div class="tgl" onclick="tgl(this)">Active</div><div class="tgl" onclick="tgl(this)">Planning</div><div class="tgl" onclick="tgl(this)">Done</div></div></div>
+        <div style="display:flex;flex-direction:column;gap:9px;padding:0 14px 14px">
+          <div class="card" style="border-radius:var(--r3);overflow:hidden;cursor:pointer" onclick="goTo('proj-detail')">
+            <div style="height:88px;background:linear-gradient(135deg,#1a0408,#2a0c10,#0a0408);position:relative;overflow:hidden;display:flex;align-items:flex-end;padding:12px"><div style="font-size:2.8rem;position:absolute;right:14px;top:50%;transform:translateY(-50%);opacity:.3">🏠</div><span class="chip c-lime" style="position:relative;z-index:1">Active</span></div>
+            <div class="cp"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:7px"><div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.2rem">Greenfield Villa, Pune</div><div style="font-size:.7rem;color:var(--t3)">CLIENT-1 · G+2 Residential · 3,800 sqft</div></div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--br)">34%</div></div><div class="pb"><div class="pbf" style="width:34%;background:var(--br)"></div></div><div style="display:flex;gap:12px;font-size:.7rem;color:var(--t3);margin-top:8px"><span>📍 Kothrud</span><span>👷 24</span><span>⚠️ 2</span><span>📅 Nov 2025</span></div></div>
+          </div>
+          <div class="card" style="border-radius:var(--r3);overflow:hidden;cursor:pointer" onclick="goTo('proj-detail')">
+            <div style="height:88px;background:linear-gradient(135deg,#0a1420,#0d2840);position:relative;overflow:hidden;display:flex;align-items:flex-end;padding:12px"><div style="font-size:2.8rem;position:absolute;right:14px;top:50%;transform:translateY(-50%);opacity:.3">🏢</div><span class="chip c-gold" style="position:relative;z-index:1">68% Done</span></div>
+            <div class="cp"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:7px"><div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.2rem">Nexus Office Park, Bengaluru</div><div style="font-size:.7rem;color:var(--t3)">CLIENT-2 · Commercial G+8 · 18,000 sqft</div></div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--gold)">68%</div></div><div class="pb"><div class="pbf" style="width:68%;background:var(--gold)"></div></div><div style="display:flex;gap:12px;font-size:.7rem;color:var(--t3);margin-top:8px"><span>📍 Whitefield</span><span>👷 48</span><span>📅 Mar 2025</span></div></div>
+          </div>
+          <div class="card" style="border-radius:var(--r3);overflow:hidden;cursor:pointer" onclick="toast('Shah Warehouse — Planning phase')">
+            <div style="height:80px;background:linear-gradient(135deg,#0a0a14,#141428);position:relative;overflow:hidden;display:flex;align-items:flex-end;padding:12px"><div style="font-size:2.4rem;position:absolute;right:14px;top:50%;transform:translateY(-50%);opacity:.3">🏭</div><span class="chip c-sky" style="position:relative;z-index:1">Planning</span></div>
+            <div class="cp" style="padding:11px 14px"><div style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem">Shah Warehouse, Surat</div><div style="font-size:.7rem;color:var(--t3)">CLIENT-1 · Industrial PEB · 12,000 sqft</div></div>
+          </div>
+          <div class="card" style="border-radius:var(--r3);overflow:hidden;opacity:.65;cursor:pointer">
+            <div class="cp" style="padding:13px 14px;display:flex;align-items:center;gap:12px"><div style="font-size:1.5rem">🏡</div><div><div style="font-family:'Bebas Neue',sans-serif;font-size:1rem">Rajputana Heights, Jaipur</div><div style="font-size:.7rem;color:var(--t3)">✅ Completed · Handed Over Oct 2024</div></div><span class="chip c-lime" style="margin-left:auto">DONE</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ╔════════════════════════════════════╗
+         ║  SCREEN: PROJECT DETAIL            ║
+         ╚════════════════════════════════════╝ -->
+    <div class="screen" id="sc-proj-detail">
+      <div class="tbar"><div class="iBtn" onclick="goBack()">←</div><div style="flex:1;margin:0 10px"><div class="tbar-title" style="font-size:1.2rem">Greenfield Villa</div><div class="tbar-sub">CLIENT-1 · Execution</div></div><div class="iBtn" onclick="openSht('projInfoSht')">ℹ️</div></div>
+      <div class="sa">
+        <!-- Summary -->
+        <div style="padding:12px 14px;background:var(--b2);border-bottom:1px solid var(--bd);display:flex;gap:14px;align-items:center;flex-shrink:0">
+          <div class="donut">
+            <svg viewBox="0 0 92 92" width="92" height="92"><circle cx="46" cy="46" r="37" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="10"/><circle cx="46" cy="46" r="37" fill="none" stroke="var(--br)" stroke-width="10" stroke-dasharray="79 148" stroke-linecap="round"/></svg>
+            <div class="dc"><div class="dv" style="color:var(--br)">34%</div><div class="dl">Done</div></div>
+          </div>
+          <div style="flex:1;display:flex;gap:16px;flex-wrap:wrap">
+            <div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--br)">118</div><div style="font-family:'Syne',sans-serif;font-size:.56rem;color:var(--t3)">Days Left</div></div>
+            <div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--gold)">₹42L</div><div style="font-family:'Syne',sans-serif;font-size:.56rem;color:var(--t3)">Spent</div></div>
+            <div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--lime)">24</div><div style="font-family:'Syne',sans-serif;font-size:.56rem;color:var(--t3)">Workers</div></div>
+            <div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--err)">2</div><div style="font-family:'Syne',sans-serif;font-size:.56rem;color:var(--t3)">Issues</div></div>
+          </div>
+        </div>
+        <!-- Module Grid -->
+        <div class="slbl" style="padding-top:12px">Project Modules</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:0 14px">
+          <div class="card cp" style="text-align:center;cursor:pointer" onclick="goTo('schedule')"><div style="font-size:1.35rem;margin-bottom:5px">📅</div><div style="font-family:'Syne',sans-serif;font-size:.62rem;font-weight:700">Schedule<br>& Gantt</div></div>
+          <div class="card cp" style="text-align:center;cursor:pointer" onclick="goTo('tasks')"><div style="font-size:1.35rem;margin-bottom:5px">✅</div><div style="font-family:'Syne',sans-serif;font-size:.62rem;font-weight:700">Tasks &<br>Progress</div></div>
+          <div class="card cp" style="text-align:center;cursor:pointer" onclick="goTo('team')"><div style="font-size:1.35rem;margin-bottom:5px">👷</div><div style="font-family:'Syne',sans-serif;font-size:.62rem;font-weight:700">Team &<br>Labour</div></div>
+          <div class="card cp" style="text-align:center;cursor:pointer" onclick="goTo('issues')"><div style="font-size:1.35rem;margin-bottom:5px">⚠️</div><div style="font-family:'Syne',sans-serif;font-size:.62rem;font-weight:700">Issues<br>& QC</div></div>
+          <div class="card cp" style="text-align:center;cursor:pointer" onclick="goTo('amendments')"><div style="font-size:1.35rem;margin-bottom:5px">📝</div><div style="font-family:'Syne',sans-serif;font-size:.62rem;font-weight:700">Amend-<br>ments</div></div>
+          <div class="card cp" style="text-align:center;cursor:pointer" onclick="goTo('vendors')"><div style="font-size:1.35rem;margin-bottom:5px">🚚</div><div style="font-family:'Syne',sans-serif;font-size:.62rem;font-weight:700">Vendors<br>& Supply</div></div>
+          <div class="card cp" style="text-align:center;cursor:pointer" onclick="goTo('inventory')"><div style="font-size:1.35rem;margin-bottom:5px">📦</div><div style="font-family:'Syne',sans-serif;font-size:.62rem;font-weight:700">Inventory<br>Update</div></div>
+          <div class="card cp" style="text-align:center;cursor:pointer" onclick="goTo('payments')"><div style="font-size:1.35rem;margin-bottom:5px">💳</div><div style="font-family:'Syne',sans-serif;font-size:.62rem;font-weight:700">Payments<br>Ledger</div></div>
+          <div class="card cp" style="text-align:center;cursor:pointer" onclick="goTo('documents')"><div style="font-size:1.35rem;margin-bottom:5px">📋</div><div style="font-family:'Syne',sans-serif;font-size:.62rem;font-weight:700">Docs &<br>Designs</div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:8px 14px 0">
+          <div class="card cp" style="text-align:center;cursor:pointer;border-color:rgba(200,52,28,.3)" onclick="goTo('live-wall')"><div style="font-size:1.35rem;margin-bottom:5px">🔴</div><div style="font-family:'Syne',sans-serif;font-size:.62rem;font-weight:700;color:#f08070">Live Wall<br>Communication</div></div>
+          <div class="card cp" style="text-align:center;cursor:pointer" onclick="goTo('handover')"><div style="font-size:1.35rem;margin-bottom:5px">🏆</div><div style="font-family:'Syne',sans-serif;font-size:.62rem;font-weight:700">Project<br>Handover</div></div>
+        </div>
+        <div class="slbl" style="padding-top:14px">Recent Activity</div>
+        <div class="card" style="margin:0 14px 14px;border-radius:var(--r2)">
+          <div class="act"><div class="act-ic" style="background:rgba(29,184,122,.1)">✅</div><div class="act-t"><b>Column casting Zone B done</b><br>5 columns · Suresh Patel · 08:30</div><div class="act-time">08:30</div></div>
+          <div class="act"><div class="act-ic" style="background:rgba(212,150,10,.1)">📦</div><div class="act-t"><b>TMT Steel 12 MT received</b><br>Inventory updated · Stores</div><div class="act-time">10:15</div></div>
+          <div class="act"><div class="act-ic" style="background:rgba(200,52,28,.1)">⚠️</div><div class="act-t"><b>Issue: Honeycomb Column C4</b><br>AI Inspection · High Priority</div><div class="act-time">12:00</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ╔════════════════════════════════════╗
+         ║  SCREEN: SCHEDULE & GANTT          ║
+         ╚════════════════════════════════════╝ -->
+    <div class="screen" id="sc-schedule">
+      <div class="tbar"><div class="iBtn" onclick="goBack()">←</div><div style="flex:1;margin:0 10px"><div class="tbar-title">Master Schedule</div><div class="tbar-sub">Gantt · Greenfield Villa</div></div><div class="iBtn" onclick="openSht('addMsSht')">＋</div></div>
+      <div class="sa">
+        <div style="padding:10px 14px 0"><div class="tglbar"><div class="tgl on" onclick="tgl(this)">Milestones</div><div class="tgl" onclick="tgl(this)">Gantt</div><div class="tgl" onclick="tgl(this)">Weekly</div></div></div>
+        <!-- Progress bar -->
+        <div style="padding:0 14px 12px"><div class="card cp" style="display:flex;gap:14px;align-items:center"><div style="flex:1"><div style="font-family:'Syne',sans-serif;font-size:.62rem;font-weight:700;color:var(--t3);margin-bottom:5px">OVERALL COMPLETION</div><div class="pb" style="height:8px"><div class="pbf" style="width:34%;background:linear-gradient(90deg,var(--br),var(--gold))"></div></div><div style="display:flex;justify-content:space-between;font-family:'Syne',sans-serif;font-size:.6rem;margin-top:4px"><span style="color:var(--t3)">Start</span><span style="color:var(--br);font-weight:700">34% — Nov 2025</span><span style="color:var(--t3)">End</span></div></div></div></div>
+        <!-- Gantt SVG -->
+        <div class="slbl">Gantt Chart — 2025</div>
+        <div class="card" style="margin:0 14px 12px;border-radius:var(--r2);padding:12px">
+          <div class="gantt-scroll">
+            <svg viewBox="0 0 640 310" style="min-width:640px;height:310px;display:block">
+              <!-- Header -->
+              <rect x="115" y="0" width="525" height="22" fill="rgba(200,52,28,.12)" rx="3"/>
+              <text x="138" y="15" fill="#6A5A50" font-size="8" font-family="Syne">JAN</text><text x="185" y="15" fill="#6A5A50" font-size="8" font-family="Syne">FEB</text><text x="232" y="15" fill="#6A5A50" font-size="8" font-family="Syne">MAR</text><text x="279" y="15" fill="#6A5A50" font-size="8" font-family="Syne">APR</text><text x="326" y="15" fill="#6A5A50" font-size="8" font-family="Syne">MAY</text><text x="373" y="15" fill="#6A5A50" font-size="8" font-family="Syne">JUN</text><text x="420" y="15" fill="#6A5A50" font-size="8" font-family="Syne">JUL</text><text x="467" y="15" fill="#6A5A50" font-size="8" font-family="Syne">AUG</text><text x="514" y="15" fill="#6A5A50" font-size="8" font-family="Syne">SEP</text><text x="561" y="15" fill="#6A5A50" font-size="8" font-family="Syne">OCT</text><text x="608" y="15" fill="#6A5A50" font-size="8" font-family="Syne">NOV</text>
+              <!-- Grid lines -->
+              <line x1="115" y1="22" x2="640" y2="22" stroke="rgba(255,255,255,.04)" stroke-width="1"/>
+              <line x1="162" y1="22" x2="162" y2="300" stroke="rgba(255,255,255,.04)" stroke-width="1"/><line x1="209" y1="22" x2="209" y2="300" stroke="rgba(255,255,255,.04)" stroke-width="1"/><line x1="256" y1="22" x2="256" y2="300" stroke="rgba(255,255,255,.04)" stroke-width="1"/><line x1="303" y1="22" x2="303" y2="300" stroke="rgba(255,255,255,.04)" stroke-width="1"/><line x1="350" y1="22" x2="350" y2="300" stroke="rgba(255,255,255,.04)" stroke-width="1"/><line x1="397" y1="22" x2="397" y2="300" stroke="rgba(255,255,255,.04)" stroke-width="1"/><line x1="444" y1="22" x2="444" y2="300" stroke="rgba(255,255,255,.04)" stroke-width="1"/><line x1="491" y1="22" x2="491" y2="300" stroke="rgba(255,255,255,.04)" stroke-width="1"/><line x1="538" y1="22" x2="538" y2="300" stroke="rgba(255,255,255,.04)" stroke-width="1"/><line x1="585" y1="22" x2="585" y2="300" stroke="rgba(255,255,255,.04)" stroke-width="1"/>
+              <!-- Today line -->
+              <line x1="168" y1="22" x2="168" y2="300" stroke="rgba(200,52,28,.7)" stroke-width="1.5" stroke-dasharray="4,3"/>
+              <text x="170" y="32" fill="#f08070" font-size="7" font-family="Syne">NOW</text>
+              <!-- Task labels -->
+              <text x="5" y="45" fill="#A8998A" font-size="7.5" font-family="Syne">Foundation</text><text x="5" y="67" fill="#A8998A" font-size="7.5" font-family="Syne">GF Columns</text><text x="5" y="89" fill="#A8998A" font-size="7.5" font-family="Syne">Floor 1 Slab</text><text x="5" y="111" fill="#A8998A" font-size="7.5" font-family="Syne">Floor 2 Slab</text><text x="5" y="133" fill="#A8998A" font-size="7.5" font-family="Syne">Brickwork</text><text x="5" y="155" fill="#A8998A" font-size="7.5" font-family="Syne">Roof Slab</text><text x="5" y="177" fill="#A8998A" font-size="7.5" font-family="Syne">MEP Rough-in</text><text x="5" y="199" fill="#A8998A" font-size="7.5" font-family="Syne">Flooring</text><text x="5" y="221" fill="#A8998A" font-size="7.5" font-family="Syne">Painting</text><text x="5" y="243" fill="#A8998A" font-size="7.5" font-family="Syne">Final QC</text><text x="5" y="265" fill="#A8998A" font-size="7.5" font-family="Syne">Handover</text>
+              <!-- Done bars -->
+              <rect x="117" y="34" width="38" height="13" fill="#1DB87A" rx="3" opacity=".9"/><rect x="117" y="56" width="28" height="13" fill="#1DB87A" rx="3" opacity=".9"/>
+              <!-- Active bar -->
+              <rect x="147" y="78" width="26" height="13" fill="var(--br)" rx="3" opacity=".9"/><rect x="147" y="78" width="10" height="13" fill="#1DB87A" rx="3" opacity=".7"/>
+              <!-- Planned bars -->
+              <rect x="171" y="100" width="30" height="13" fill="rgba(200,52,28,.3)" rx="3"/><rect x="199" y="122" width="52" height="13" fill="rgba(200,52,28,.3)" rx="3"/><rect x="249" y="144" width="36" height="13" fill="rgba(200,52,28,.3)" rx="3"/><rect x="283" y="166" width="42" height="13" fill="rgba(200,52,28,.3)" rx="3"/><rect x="322" y="188" width="56" height="13" fill="rgba(200,52,28,.3)" rx="3"/>
+              <rect x="452" y="210" width="82" height="13" fill="rgba(200,52,28,.3)" rx="3"/><rect x="532" y="232" width="32" height="13" fill="rgba(200,52,28,.3)" rx="3"/>
+              <rect x="562" y="254" width="28" height="13" fill="rgba(212,150,10,.5)" rx="3"/>
+              <!-- Legend -->
+              <rect x="117" y="283" width="10" height="7" fill="#1DB87A" rx="2"/><text x="130" y="289" fill="#A8998A" font-size="7" font-family="Syne">Completed</text>
+              <rect x="198" y="283" width="10" height="7" fill="var(--br)" rx="2"/><text x="211" y="289" fill="#A8998A" font-size="7" font-family="Syne">Active</text>
+              <rect x="262" y="283" width="10" height="7" fill="rgba(200,52,28,.3)" rx="2"/><text x="275" y="289" fill="#A8998A" font-size="7" font-family="Syne">Planned</text>
+              <rect x="328" y="283" width="10" height="7" fill="rgba(212,150,10,.5)" rx="2"/><text x="341" y="289" fill="#A8998A" font-size="7" font-family="Syne">Critical</text>
+            </svg>
+          </div>
+        </div>
+        <!-- Milestones list -->
+        <div class="slbl">Milestones <a onclick="openSht('addMsSht')">+ Add</a></div>
+        <div class="card" style="margin:0 14px 14px;border-radius:var(--r2)" id="msList"></div>
+      </div>
+    </div>
+
+    <!-- ╔════════════════════════════════════╗
+         ║  SCREEN: TASKS                     ║
+         ╚════════════════════════════════════╝ -->
+    <div class="screen" id="sc-tasks">
+      <div class="tbar"><div class="iBtn" onclick="goBack()">←</div><div style="flex:1;margin:0 10px"><div class="tbar-title">Tasks</div><div class="tbar-sub">12 Pending · 4 Due Today</div></div><div class="iBtn" onclick="openSht('addTaskSht')">＋</div></div>
+      <div class="sa">
+        <div style="padding:10px 14px 0"><div class="tglbar"><div class="tgl on" onclick="tgl(this)">All</div><div class="tgl" onclick="tgl(this)">Today</div><div class="tgl" onclick="tgl(this)">Mine</div><div class="tgl" onclick="tgl(this)">Done</div></div></div>
+        <div id="taskList"></div>
+      </div>
+    </div>
+
+    <!-- ╔════════════════════════════════════╗
+         ║  SCREEN: TEAM & LABOUR             ║
+         ╚════════════════════════════════════╝ -->
+    <div class="screen" id="sc-team">
+      <div class="tbar"><div class="iBtn" onclick="goBack()">←</div><div style="flex:1;margin:0 10px"><div class="tbar-title">Team & Labour</div><div class="tbar-sub" id="teamSub">24P · 4A · 0H</div></div><div class="iBtn" onclick="openSht('addWorkerSht')">＋</div></div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--bd);flex-shrink:0">
+        <div style="text-align:center;padding:9px 0;border-right:1px solid var(--bd)"><div style="font-family:'Bebas Neue',sans-serif;font-size:1.35rem;color:var(--lime)" id="wP">24</div><div style="font-family:'Syne',sans-serif;font-size:.55rem;color:var(--t3)">PRESENT</div></div>
+        <div style="text-align:center;padding:9px 0;border-right:1px solid var(--bd)"><div style="font-family:'Bebas Neue',sans-serif;font-size:1.35rem;color:var(--err)" id="wA">4</div><div style="font-family:'Syne',sans-serif;font-size:.55rem;color:var(--t3)">ABSENT</div></div>
+        <div style="text-align:center;padding:9px 0;border-right:1px solid var(--bd)"><div style="font-family:'Bebas Neue',sans-serif;font-size:1.35rem;color:var(--warn)" id="wH">0</div><div style="font-family:'Syne',sans-serif;font-size:.55rem;color:var(--t3)">HALF</div></div>
+        <div style="text-align:center;padding:9px 0"><div style="font-family:'Bebas Neue',sans-serif;font-size:1.35rem;color:var(--gold)">₹56K</div><div style="font-family:'Syne',sans-serif;font-size:.55rem;color:var(--t3)">WAGES</div></div>
+      </div>
+      <div class="sa"><div class="slbl">Workers — <span id="teamDate" style="font-size:.62rem;font-weight:400;text-transform:none;letter-spacing:0;color:var(--t3)"></span></div><div class="card" style="margin:0 14px 14px;border-radius:var(--r2)" id="workerList"></div></div>
+    </div>
+
+    <!-- ╔════════════════════════════════════╗
+         ║  SCREEN: ISSUES & QC               ║
+         ╚════════════════════════════════════╝ -->
+    <div class="screen" id="sc-issues">
+      <div class="tbar"><div class="iBtn" onclick="goBack()">←</div><div style="flex:1;margin:0 10px"><div class="tbar-title">Issues & QC</div><div class="tbar-sub">2 Open · 3 Progress · 11 Resolved</div></div><div class="iBtn" onclick="openSht('issueSht')">＋</div></div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);border-bottom:1px solid var(--bd);flex-shrink:0">
+        <div style="text-align:center;padding:9px;border-right:1px solid var(--bd)"><div style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--err)">2</div><div style="font-family:'Syne',sans-serif;font-size:.55rem;color:var(--t3)">OPEN</div></div>
+        <div style="text-align:center;padding:9px;border-right:1px solid var(--bd)"><div style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--warn)">3</div><div style="font-family:'Syne',sans-serif;font-size:.55rem;color:var(--t3)">IN PROGRESS</div></div>
+        <div style="text-align:center;padding:9px"><div style="font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--lime)">11</div><div style="font-family:'Syne',sans-serif;font-size:.55rem;color:var(--t3)">RESOLVED</div></div>
+      </div>
+      <div class="sa" style="padding-bottom:74px"><div class="slbl">Open Issues</div><div id="issOpen"></div><div class="slbl" style="padding-top:4px">In Progress</div><div id="issProg"></div><div class="slbl" style="padding-top:4px">Resolved</div><div id="issRes"></div></div>
+    </div>
+
+    <!-- ╔════════════════════════════════════╗
+         ║  SCREEN: AMENDMENTS                ║
+         ╚════════════════════════════════════╝ -->
+    <div class="screen" id="sc-amendments">
+      <div class="tbar"><div class="iBtn" onclick="goBack()">←</div><div style="flex:1;margin:0 10px"><div class="tbar-title">Amendments</div><div class="tbar-sub">Design · Spec · Budget</div></div><div class="iBtn" onclick="openSht('amdSht')">＋</div></div>
+      <div class="sa" style="padding-bottom:74px"><div class="slbl">Pending <a onclick="openSht('amdSht')">+ Raise</a></div><div id="amdList"></div><div class="slbl" style="padding-top:6px">Approved</div><div class="card" style="margin:0 14px 12px;border-radius:var(--r2)"><div class="li"><div class="li-ic" style="background:rgba(29,184,122,.1)">✅</div><div class="li-c"><div class="li-t">Kitchen layout change — Floor 1</div><div class="li-s">Approved · Updated in drawings · Informed all team</div></div><span class="chip c-lime">Done</span></div><div class="li" style="border:none"><div class="li-ic" style="background:rgba(29,184,122,.1)">✅</div><div class="li-c"><div class="li-t">Beam depth revision T→I beam</div><div class="li-s">Structural re-design complete · Team notified</div></div><span class="chip c-lime">Done</span></div></div></div>
+    </div>
+
+    <!-- ╔════════════════════════════════════╗
+         ║  SCREEN: VENDORS & SUPPLY          ║
+         ╚════════════════════════════════════╝ -->
+    <div class="screen" id="sc-vendors">
+      <div class="tbar"><div class="iBtn" onclick="goBack()">←</div><div style="flex:1;margin:0 10px"><div class="tbar-title">Vendors & Supply</div><div class="tbar-sub">Registration · Procurement</div></div><div class="iBtn" onclick="openSht('vendorSht')">＋</div></div>
+      <div class="sa" style="padding-bottom:74px"><div style="padding:10px 14px 0"><div class="tglbar"><div class="tgl on" onclick="tgl(this)">All</div><div class="tgl" onclick="tgl(this)">Steel</div><div class="tgl" onclick="tgl(this)">Concrete</div><div class="tgl" onclick="tgl(this)">MEP</div></div></div><div class="slbl">Registered Vendors <a onclick="openSht('vendorSht')">+ Register</a></div><div id="vendorList"></div></div>
+    </div>
+
+    <!-- ╔════════════════════════════════════╗
+         ║  SCREEN: INVENTORY                 ║
+         ╚════════════════════════════════════╝ -->
+    <div class="screen" id="sc-inventory">
+      <div class="tbar"><div class="iBtn" onclick="goBack()">←</div><div style="flex:1;margin:0 10px"><div class="tbar-title">Inventory</div><div class="tbar-sub">Materials · Tools · Equipment</div></div><div class="iBtn" onclick="openSht('invSht')">＋</div></div>
+      <div class="sa" style="padding-bottom:74px"><div class="slbl">Current Stock</div><div class="card" style="margin:0 14px 14px;border-radius:var(--r2)" id="invList"></div></div>
+    </div>
+
+    <!-- ╔════════════════════════════════════╗
+         ║  SCREEN: PAYMENTS LEDGER           ║
+         ╚════════════════════════════════════╝ -->
+    <div class="screen" id="sc-payments">
+      <div class="tbar"><div class="iBtn" onclick="goBack()">←</div><div style="flex:1;margin:0 10px"><div class="tbar-title">Payments</div><div class="tbar-sub">Ledger · Receipts · Schedule</div></div><div class="iBtn" onclick="openSht('paymentSht')">📤</div></div>
+      <div class="sa" style="padding-bottom:74px">
+        <div style="padding:12px 14px;display:flex;gap:14px;align-items:center">
+          <div class="donut"><svg viewBox="0 0 92 92" width="92" height="92"><circle cx="46" cy="46" r="37" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="10"/><circle cx="46" cy="46" r="37" fill="none" stroke="var(--lime)" stroke-width="10" stroke-dasharray="93 148" stroke-linecap="round"/><circle cx="46" cy="46" r="37" fill="none" stroke="var(--gold)" stroke-width="10" stroke-dasharray="50 148" stroke-dashoffset="-93" stroke-linecap="round" opacity=".7"/></svg><div class="dc"><div class="dv" style="color:var(--lime)">50%</div><div class="dl">Paid</div></div></div>
+          <div><div style="margin-bottom:8px"><div style="font-family:'Syne',sans-serif;font-size:.6rem;color:var(--t3)">Total Contract</div><div style="font-family:'Bebas Neue',sans-serif;font-size:1.6rem">₹1,20,00,000</div></div><div style="display:flex;gap:16px"><div><div style="font-family:'Syne',sans-serif;font-size:.58rem;color:var(--t3)">Received</div><div style="font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--lime)">₹60L</div></div><div><div style="font-family:'Syne',sans-serif;font-size:.58rem;color:var(--t3)">Pending</div><div style="font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--gold)">₹60L</div></div></div></div>
+        </div>
+        <div class="slbl">Payment Schedule & Ledger</div>
+        <div id="payList"></div>
+      </div>
+    </div>
+
+    <!-- ╔════════════════════════════════════╗
+         ║  SCREEN: DOCUMENTS & DESIGNS       ║
+         ╚════════════════════════════════════╝ -->
+    <div class="screen" id="sc-documents">
+      <div class="tbar"><div class="iBtn" onclick="goBack()">←</div><div style="flex:1;margin:0 10px"><div class="tbar-title">Documents</div><div class="tbar-sub">Designs · MOU · Warranties</div></div><div class="iBtn" onclick="toast('📤 Connect storage to enable upload')">⬆️</div></div>
+      <div class="sa" style="padding-bottom:74px">
+        <div class="sw-wrap" style="margin-top:11px"><div class="sw-ic">🔍</div><input class="sw-inp" placeholder="Search documents…" oninput="filterDocs(this.value)"/></div>
+        <div style="display:flex;gap:7px;padding:0 14px 11px;overflow-x:auto;scrollbar-width:none">
+          <button class="chip c-red" style="cursor:pointer">All</button><button class="chip c-gray" style="cursor:pointer">Drawings</button><button class="chip c-gray" style="cursor:pointer">Contracts</button><button class="chip c-gray" style="cursor:pointer">Reports</button><button class="chip c-gray" style="cursor:pointer">Warranties</button>
+        </div>
+        <div class="card" style="margin:0 14px 14px;border-radius:var(--r2)" id="docList"></div>
+      </div>
+    </div>
+
+    <!-- ╔════════════════════════════════════╗
+         ║  SCREEN: LIVE WALL                 ║
+         ╚════════════════════════════════════╝ -->
+    <div class="screen" id="sc-live-wall">
+      <div class="tbar" style="border:none"><div class="iBtn" onclick="goBack()">←</div><div style="flex:1;margin:0 10px"><div style="display:flex;align-items:center;gap:8px"><div class="tbar-title" style="font-size:1.3rem">Live Wall</div><div class="live-ind"><div class="live-dot"></div>LIVE</div></div><div class="tbar-sub">Team Communication</div></div><div class="iBtn" onclick="toast('📹 Site streaming — connect RTSP feed')">📹</div></div>
+      <!-- Stream banner -->
+      <div style="background:linear-gradient(135deg,#1a0408,#0a0408);border-bottom:1px solid rgba(200,52,28,.2);padding:10px 14px;display:flex;align-items:center;gap:10px;flex-shrink:0;cursor:pointer" onclick="toast('📹 Real-time site streaming — 4 cameras active')">
+        <div style="font-size:1.4rem">📹</div>
+        <div style="flex:1"><div style="font-family:'Syne',sans-serif;font-weight:700;font-size:.77rem">Real-Time Site Streaming</div><div style="font-size:.67rem;color:var(--t3)">Tap to view live feed · 4 cameras active</div></div>
+        <div class="live-ind"><div class="live-dot"></div>4 CAM</div>
+      </div>
+      <!-- Chat -->
+      <div class="sa" id="chatArea" style="padding:6px 0 0"><div id="msgList"></div></div>
+      <div style="padding:8px 12px 14px;background:rgba(10,5,8,.97);border-top:1px solid var(--bd);display:flex;gap:8px;flex-shrink:0">
+        <input class="inp" id="chatInp" style="flex:1;padding:.52rem .82rem;border-radius:22px;font-size:.82rem" placeholder="Message team…" onkeydown="if(event.key==='Enter')sendMsg()"/>
+        <button style="width:37px;height:37px;border-radius:50%;background:linear-gradient(135deg,var(--br),var(--br2));display:flex;align-items:center;justify-content:center;font-size:.95rem;flex-shrink:0" onclick="sendMsg()">➤</button>
+        <button style="width:37px;height:37px;border-radius:50%;background:var(--b4);border:1px solid var(--bd2);display:flex;align-items:center;justify-content:center;font-size:.95rem;flex-shrink:0" onclick="toast('📎 Attach photo or file')">📎</button>
+      </div>
+    </div>
+
+    <!-- ╔════════════════════════════════════╗
+         ║  SCREEN: CLIENT DASHBOARD          ║
+         ╚════════════════════════════════════╝ -->
+    <div class="screen" id="sc-client-dash">
+      <div class="tbar"><div><div class="tbar-title">My Project</div><div class="tbar-sub">Greenfield Villa · CLIENT-1</div></div><div style="display:flex;gap:8px"><div class="iBtn" style="position:relative" onclick="goTo('notifications')">🔔<div class="ndot"></div></div><div class="iBtn" onclick="goTo('live-wall')">💬</div></div></div>
+      <div class="sa">
+        <!-- Client project banner -->
+        <div style="margin:10px 14px;background:linear-gradient(135deg,#080e14,#0f1a18,#080e14);border:1px solid rgba(29,184,122,.18);border-radius:var(--r3);padding:16px;position:relative;overflow:hidden">
+          <div style="font-family:'Syne',sans-serif;font-size:.62rem;font-weight:700;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.15em">Your Project Status</div>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:1.7rem;margin:.2rem 0">Greenfield Villa, Pune</div>
+          <div style="font-size:.73rem;color:rgba(255,255,255,.5)">G+2 Residential · MOU Signed · On Track</div>
+          <div style="position:absolute;right:14px;bottom:12px;text-align:right">
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:2rem;color:rgba(29,184,122,.9);line-height:1">34%</div>
+            <div style="font-family:'Syne',sans-serif;font-size:.56rem;color:rgba(255,255,255,.4)">Complete</div>
+          </div>
+        </div>
+        <div style="padding:0 14px 4px"><div class="pb" style="height:6px"><div class="pbf" style="width:34%;background:linear-gradient(90deg,var(--lime),var(--sky))"></div></div></div>
+        <!-- Client tiles — all from flowchart -->
+        <div class="slbl" style="padding-top:12px">Project Information</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 14px">
+          <div class="cl-tile" onclick="openSht('projInfoSht')"><div class="cl-tile-ic">📋</div><div class="cl-tile-t">Project Initial<br>Details</div></div>
+          <div class="cl-tile" onclick="toast('📜 MOU & signed documents')"><div class="cl-tile-ic">📜</div><div class="cl-tile-t">MOU & Signed<br>Documents</div></div>
+          <div class="cl-tile" onclick="goTo('documents')"><div class="cl-tile-ic">📐</div><div class="cl-tile-t">Designs of<br>Project</div></div>
+          <div class="cl-tile" onclick="goTo('amendments')"><div class="cl-tile-ic">📝</div><div class="cl-tile-t">Amendments<br>in Design</div></div>
+          <div class="cl-tile" style="border-color:rgba(212,150,10,.2)" onclick="toast('💰 Specification & budget amendments')"><div class="cl-tile-ic">💰</div><div class="cl-tile-t">Spec & Budget<br>Amendments</div></div>
+          <div class="cl-tile" onclick="goTo('payments')"><div class="cl-tile-ic">🧾</div><div class="cl-tile-t">Payments Log<br>& Receipts</div></div>
+        </div>
+        <div class="slbl" style="padding-top:12px">Progress & Reports</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 14px">
+          <div class="cl-tile" onclick="goTo('schedule')"><div class="cl-tile-ic">📅</div><div class="cl-tile-t">Master Schedule<br>& Gantt</div></div>
+          <div class="cl-tile" onclick="goTo('reports')"><div class="cl-tile-ic">📊</div><div class="cl-tile-t">Monthly<br>Report</div></div>
+          <div class="cl-tile" onclick="goTo('reports')"><div class="cl-tile-ic">📆</div><div class="cl-tile-t">Weekly Schedule<br>& Report</div></div>
+          <div class="cl-tile" onclick="goTo('reports')"><div class="cl-tile-ic">📈</div><div class="cl-tile-t">Overall<br>Reports</div></div>
+          <div class="cl-tile" onclick="goTo('issues')"><div class="cl-tile-ic">⚠️</div><div class="cl-tile-t">Issues &<br>Resolutions</div></div>
+          <div class="cl-tile" onclick="goTo('team')"><div class="cl-tile-ic">👷</div><div class="cl-tile-t">Crew Members<br>Details</div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:8px 14px 0">
+          <div class="cl-tile" style="border-color:rgba(200,52,28,.3)" onclick="goTo('live-wall')"><div class="cl-tile-ic" style="font-size:1.4rem">🔴</div><div class="cl-tile-t" style="color:#f08070">Live Wall<br>Communication</div></div>
+          <div class="cl-tile" style="border-color:rgba(29,184,122,.22)" onclick="toast('📹 Real-time site stream loading…')"><div class="cl-tile-ic" style="font-size:1.4rem">📹</div><div class="cl-tile-t" style="color:#5de8aa">Real-Time<br>Site Stream</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ╔════════════════════════════════════╗
+         ║  SCREEN: REPORTS                   ║
+         ╚════════════════════════════════════╝ -->
+    <div class="screen" id="sc-reports">
+      <div class="tbar"><div class="iBtn" onclick="goBack()">←</div><div style="flex:1;margin:0 10px"><div class="tbar-title">Reports</div><div class="tbar-sub">Analytics · Progress · Attendance</div></div><div class="iBtn" onclick="toast('↓ Export all reports as PDF')">↓</div></div>
+      <div class="sa" style="padding-bottom:74px">
+        <div class="slbl">Work Progress vs Schedule</div>
+        <div class="card" style="margin:0 14px 12px;border-radius:var(--r2);padding:14px">
+          <div style="font-family:'Syne',sans-serif;font-size:.66rem;font-weight:700;color:var(--t3);margin-bottom:10px">Monthly Completion — Jan to May 2025</div>
+          <svg viewBox="0 0 340 125" style="width:100%;height:125px;display:block">
+            <line x1="38" y1="10" x2="338" y2="10" stroke="rgba(255,255,255,.04)" stroke-width="1"/><line x1="38" y1="37" x2="338" y2="37" stroke="rgba(255,255,255,.04)" stroke-width="1"/><line x1="38" y1="64" x2="338" y2="64" stroke="rgba(255,255,255,.04)" stroke-width="1"/><line x1="38" y1="91" x2="338" y2="91" stroke="rgba(255,255,255,.04)" stroke-width="1"/>
+            <text x="0" y="13" fill="var(--t3)" font-size="6.5" font-family="Syne">100%</text><text x="5" y="40" fill="var(--t3)" font-size="6.5" font-family="Syne">75%</text><text x="5" y="67" fill="var(--t3)" font-size="6.5" font-family="Syne">50%</text><text x="5" y="94" fill="var(--t3)" font-size="6.5" font-family="Syne">25%</text>
+            <!-- Actual bars -->
+            <rect x="50" y="82" width="20" height="9" fill="var(--br)" rx="2" opacity=".9"/><rect x="102" y="72" width="20" height="19" fill="var(--br)" rx="2" opacity=".9"/><rect x="154" y="64" width="20" height="27" fill="var(--br)" rx="2" opacity=".9"/><rect x="206" y="78" width="20" height="13" fill="var(--br)" rx="2" opacity=".9"/><rect x="258" y="56" width="20" height="35" fill="var(--br)" rx="2" opacity=".9"/>
+            <!-- Target line -->
+            <polyline points="60,76 112,66 164,56 216,46 268,38" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-dasharray="4,3"/>
+            <text x="50" y="114" fill="var(--t3)" font-size="6.5" font-family="Syne">Jan</text><text x="102" y="114" fill="var(--t3)" font-size="6.5" font-family="Syne">Feb</text><text x="154" y="114" fill="var(--t3)" font-size="6.5" font-family="Syne">Mar</text><text x="206" y="114" fill="var(--t3)" font-size="6.5" font-family="Syne">Apr</text><text x="258" y="114" fill="var(--t3)" font-size="6.5" font-family="Syne">May</text>
+            <rect x="80" y="4" width="8" height="5" fill="var(--br)" rx="1"/><text x="91" y="9" fill="var(--t2)" font-size="6" font-family="Syne">Actual</text>
+            <line x1="130" y1="6" x2="143" y2="6" stroke="var(--gold)" stroke-width="1.5" stroke-dasharray="3,2"/><text x="148" y="9" fill="var(--t2)" font-size="6" font-family="Syne">Target</text>
+          </svg>
+        </div>
+        <div class="slbl" style="padding-top:4px">Generate Reports</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;padding:0 14px 12px">
+          <div class="card cp" style="cursor:pointer;text-align:center" onclick="toast('📄 Weekly Progress Report generating…')"><div style="font-size:1.7rem;margin-bottom:7px">📄</div><div style="font-family:'Syne',sans-serif;font-size:.7rem;font-weight:700">Weekly Progress</div><div style="font-size:.62rem;color:var(--t3);margin-top:3px">Tasks & schedule</div></div>
+          <div class="card cp" style="cursor:pointer;text-align:center" onclick="toast('💰 Budget Report generating…')"><div style="font-size:1.7rem;margin-bottom:7px">💰</div><div style="font-family:'Syne',sans-serif;font-size:.7rem;font-weight:700">Budget Report</div><div style="font-size:.62rem;color:var(--t3);margin-top:3px">Full cost breakdown</div></div>
+          <div class="card cp" style="cursor:pointer;text-align:center" onclick="toast('👷 Attendance & Wage Report generating…')"><div style="font-size:1.7rem;margin-bottom:7px">👷</div><div style="font-family:'Syne',sans-serif;font-size:.7rem;font-weight:700">Attendance<br>& Wages</div><div style="font-size:.62rem;color:var(--t3);margin-top:3px">Labour analysis</div></div>
+          <div class="card cp" style="cursor:pointer;text-align:center" onclick="toast('🚚 Vendor & Procurement Report…')"><div style="font-size:1.7rem;margin-bottom:7px">🚚</div><div style="font-family:'Syne',sans-serif;font-size:.7rem;font-weight:700">Vendor &<br>Procurement</div><div style="font-size:.62rem;color:var(--t3);margin-top:3px">Supply chain</div></div>
+          <div class="card cp" style="cursor:pointer;text-align:center" onclick="goTo('issues')"><div style="font-size:1.7rem;margin-bottom:7px">⚠️</div><div style="font-family:'Syne',sans-serif;font-size:.7rem;font-weight:700">Issue &<br>QC Report</div><div style="font-size:.62rem;color:var(--t3);margin-top:3px">Quality analysis</div></div>
+          <div class="card cp" style="cursor:pointer;text-align:center" onclick="toast('📈 Overall Project Report generating…')"><div style="font-size:1.7rem;margin-bottom:7px">📈</div><div style="font-family:'Syne',sans-serif;font-size:.7rem;font-weight:700">Overall Project<br>Summary</div><div style="font-size:.62rem;color:var(--t3);margin-top:3px">Complete analysis</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ╔════════════════════════════════════╗
+         ║  SCREEN: KNOWLEDGE CENTER          ║
+         ╚════════════════════════════════════╝ -->
+    <div class="screen" id="sc-knowledge">
+      <div class="tbar"><div class="iBtn" onclick="goBack()">←</div><div style="flex:1;margin:0 10px"><div class="tbar-title">Knowledge Center</div><div class="tbar-sub">Work Standards · Best Practices</div></div></div>
+      <div class="sa" style="padding-bottom:74px">
+        <div class="sw-wrap" style="margin-top:11px"><div class="sw-ic">🔍</div><input class="sw-inp" placeholder="Search standards…"/></div>
+        <div style="display:flex;gap:7px;padding:0 14px 11px;overflow-x:auto;scrollbar-width:none">
+          <button class="chip c-red" style="cursor:pointer">All</button><button class="chip c-gray" style="cursor:pointer">Concrete</button><button class="chip c-gray" style="cursor:pointer">Steel</button><button class="chip c-gray" style="cursor:pointer">Safety</button><button class="chip c-gray" style="cursor:pointer">MEP</button><button class="chip c-gray" style="cursor:pointer">Finishing</button>
+        </div>
+        <div id="kbList"></div>
+      </div>
+    </div>
+
+    <!-- ╔════════════════════════════════════╗
+         ║  SCREEN: HANDOVER                  ║
+         ╚════════════════════════════════════╝ -->
+    <div class="screen" id="sc-handover">
+      <div class="tbar"><div class="iBtn" onclick="goBack()">←</div><div style="flex:1;margin:0 10px"><div class="tbar-title">Project Handover</div><div class="tbar-sub">Final Check · Warranties · Docs</div></div></div>
+      <div class="sa" style="padding-bottom:74px">
+        <div style="margin:12px 14px">
+          <div style="background:linear-gradient(135deg,#0a1408,#0f2010);border:1px solid rgba(29,184,122,.2);border-radius:var(--r3);padding:16px;text-align:center">
+            <div style="font-size:2rem;margin-bottom:6px">🏆</div>
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:1.5rem;margin-bottom:4px">Handover Checklist</div>
+            <div style="font-size:.74rem;color:var(--t3)">6 of 12 items completed</div>
+            <div class="pb" style="margin-top:10px;height:7px"><div class="pbf" style="width:50%;background:linear-gradient(90deg,var(--lime),var(--sky))"></div></div>
+          </div>
+        </div>
+        <div class="slbl">Checklist Items</div>
+        <div class="card" style="margin:0 14px 14px;border-radius:var(--r2)" id="handoverList"></div>
+      </div>
+    </div>
+
+    <!-- ╔════════════════════════════════════╗
+         ║  SCREEN: NOTIFICATIONS             ║
+         ╚════════════════════════════════════╝ -->
+    <div class="screen" id="sc-notifications">
+      <div class="tbar"><div class="iBtn" onclick="goBack()">←</div><div style="flex:1;margin:0 10px"><div class="tbar-title">Notifications</div><div class="tbar-sub">5 Unread</div></div><div class="iBtn" onclick="toast('✅ All marked as read')">✓</div></div>
+      <div class="sa" style="padding-bottom:74px" id="notifList"></div>
+    </div>
+
+    <!-- ╔════════════════════════════════════╗
+         ║  SCREEN: SETTINGS                  ║
+         ╚════════════════════════════════════╝ -->
+    <div class="screen" id="sc-settings">
+      <div class="tbar"><div class="iBtn" onclick="goBack()">←</div><div style="flex:1;margin:0 10px"><div class="tbar-title">Settings</div><div class="tbar-sub">Account · Preferences</div></div></div>
+      <div class="sa" style="padding-bottom:74px">
+        <!-- Profile -->
+        <div style="padding:14px;display:flex;gap:13px;align-items:center;border-bottom:1px solid var(--bd)">
+          <div class="av" id="settAv" style="width:52px;height:52px;font-size:1.2rem;border-radius:var(--r2);background:linear-gradient(135deg,var(--br2),var(--br))">SA</div>
+          <div style="flex:1"><div style="font-family:'Syne',sans-serif;font-weight:800;font-size:.95rem" id="settName">Super Admin</div><div style="font-size:.7rem;color:var(--t3)" id="settEmail">admin@brickos.in</div><div style="margin-top:4px" id="settBadge"><span class="rbadge rb-s">SUPER ADMIN</span></div></div>
+          <button class="chip c-red" onclick="toast('✅ Edit profile')">Edit</button>
+        </div>
+        <div class="slbl">Role & Access</div>
+        <div class="card" style="margin:0 14px 12px;border-radius:var(--r2)">
+          <div class="srow" onclick="returnToRole()"><div><div class="srow-t">Switch Role</div><div class="srow-s">Super Admin / Contractor / Client</div></div><span style="color:var(--t3)">›</span></div>
+          <div class="srow" style="border:none"><div><div class="srow-t">Current Project</div><div class="srow-s">Greenfield Villa, Pune</div></div><span style="color:var(--t3)">›</span></div>
+        </div>
+        <div class="slbl">Notifications</div>
+        <div class="card" style="margin:0 14px 12px;border-radius:var(--r2)">
+          <div class="srow"><div><div class="srow-t">Push Alerts</div><div class="srow-s">Issues, amendments, payments</div></div><div class="sw on" onclick="this.classList.toggle('on')"></div></div>
+          <div class="srow"><div><div class="srow-t">AI Quality Alerts</div><div class="srow-s">Instant defect detection</div></div><div class="sw on" onclick="this.classList.toggle('on')"></div></div>
+          <div class="srow" style="border:none"><div><div class="srow-t">WhatsApp Updates</div><div class="srow-s">Critical alerts via WhatsApp</div></div><div class="sw on" onclick="this.classList.toggle('on')"></div></div>
+        </div>
+        <div class="slbl">App Preferences</div>
+        <div class="card" style="margin:0 14px 12px;border-radius:var(--r2)">
+          <div class="srow"><div><div class="srow-t">Auto GPS Tagging</div><div class="srow-s">Photos tagged with site location</div></div><div class="sw on" onclick="this.classList.toggle('on')"></div></div>
+          <div class="srow"><div><div class="srow-t">Offline Mode</div><div class="srow-s">Cache data for poor connectivity</div></div><div class="sw on" onclick="this.classList.toggle('on')"></div></div>
+          <div class="srow" style="border:none"><div><div class="srow-t">App Version</div><div class="srow-s">BrickOS v3.2.1 · Latest</div></div><span class="chip c-lime">Up to date</span></div>
+        </div>
+        <div style="padding:14px"><button class="btnS" onclick="returnToRole()">🚪 Sign Out</button></div>
+      </div>
+    </div>
+
+    <!-- ══ BOTTOM NAVIGATION ══ -->
+    <div class="bnav" id="bnav">
+      <div class="ni on" id="ni-dash" onclick="navTo('dash')"><div class="ni-ln"></div><div class="ni-ic">🏠</div><div class="ni-lb">Home</div></div>
+      <div class="ni" id="ni-projects" onclick="navTo('projects')"><div class="ni-ln"></div><div class="ni-ic">🏗️</div><div class="ni-lb">Projects</div></div>
+      <div class="fab-w" onclick="openSht('mainSht')"><div class="fab">＋</div></div>
+      <div class="ni" id="ni-reports" onclick="navTo('reports')"><div class="ni-ln"></div><div class="ni-ic">📊</div><div class="ni-lb">Reports</div></div>
+      <div class="ni" id="ni-settings" onclick="navTo('settings')"><div class="ni-ln"></div><div class="ni-ic">⚙️</div><div class="ni-lb">Settings</div></div>
+    </div>
+
+  </div><!-- /mainApp -->
+
+  <!-- ══════════════════════════════════════════
+       BOTTOM SHEETS
+  ══════════════════════════════════════════ -->
+  <!-- Main Action Sheet -->
+  <div class="sov" id="mainSht" onclick="if(event.target===this)closeSht('mainSht')">
+    <div class="sht"><div class="shdl"></div><div class="sh-t">Quick Actions</div><div class="sh-s">What would you like to do?</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
+        <button class="btnP" style="font-size:.72rem;padding:.7rem" onclick="closeSht('mainSht');openSht('issueSht')">⚠️ Report Issue</button>
+        <button class="btnP" style="font-size:.72rem;padding:.7rem;background:linear-gradient(135deg,var(--gold),var(--gld3));color:#000;box-shadow:var(--sh-g)" onclick="closeSht('mainSht');openSht('taskRepSht')">📸 Task Report</button>
+        <button class="btnL" style="font-size:.72rem;padding:.7rem" onclick="closeSht('mainSht');toast('✅ Attendance');goTo('team')">✅ Attendance</button>
+        <button class="btnP" style="font-size:.72rem;padding:.7rem;background:linear-gradient(135deg,var(--gold),var(--gld3));color:#000;box-shadow:var(--sh-g)" onclick="closeSht('mainSht');openSht('amdSht')">📝 Amendment</button>
+        <button class="btnP" style="font-size:.72rem;padding:.7rem;background:linear-gradient(135deg,var(--sky),#0d4f94)" onclick="closeSht('mainSht');openSht('newProjSht')">🏗️ New Project</button>
+        <button class="btnS" style="font-size:.72rem;padding:.7rem" onclick="closeSht('mainSht')">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Issue Sheet -->
+  <div class="sov" id="issueSht" onclick="if(event.target===this)closeSht('issueSht')">
+    <div class="sht"><div class="shdl"></div><div class="sh-t">Report Issue / QC Problem</div><div class="sh-s">Notify entire team immediately on submission</div>
+      <div class="fg"><label class="fl">Issue Title *</label><input class="inp" id="issT" placeholder="e.g. Concrete honeycomb on Column C4…"/></div>
+      <div class="fg"><label class="fl">Description</label><textarea class="inp" id="issD" rows="3" placeholder="Describe in detail — location, severity, photos needed…"></textarea></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
+        <div class="fg"><label class="fl">Priority</label><select class="inp" id="issP"><option value="hi">🔴 High — Structural</option><option value="md" selected>🟡 Medium — Quality</option><option value="lo">🟢 Low — Minor</option></select></div>
+        <div class="fg"><label class="fl">Site Location</label><input class="inp" id="issL" placeholder="Zone B, Floor 2, Col C4…"/></div>
+      </div>
+      <button class="btnP" onclick="submitIssue()">⚠️ Submit & Inform All Team</button>
+    </div>
+  </div>
+
+  <!-- Task Report Sheet -->
+  <div class="sov" id="taskRepSht" onclick="if(event.target===this)closeSht('taskRepSht')">
+    <div class="sht"><div class="shdl"></div><div class="sh-t">Task Progress Report</div><div class="sh-s">Report work with photos & quantity — AI quality analysis triggered</div>
+      <div class="fg"><label class="fl">Task *</label><select class="inp"><option>Column Casting — Zone B</option><option>Brickwork — Floor 1 North</option><option>Steel Fixing — Floor 2 East</option><option>Plastering — Ground Floor</option><option>MEP Rough-in</option></select></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
+        <div class="fg"><label class="fl">Quantity Done</label><input class="inp" type="number" placeholder="e.g. 5"/></div>
+        <div class="fg"><label class="fl">Unit</label><select class="inp"><option>Nos</option><option>Sqft</option><option>RMT</option><option>MT</option><option>CUM</option></select></div>
+      </div>
+      <div class="fg"><label class="fl">Work Notes</label><textarea class="inp" rows="2" placeholder="Observations, issues noted, quality remarks…"></textarea></div>
+      <div style="background:rgba(30,127,212,.08);border:1px solid rgba(30,127,212,.2);border-radius:var(--r1);padding:10px;font-size:.74rem;color:rgba(112,184,248,.9);margin-bottom:13px">📸 Upload work photos for automatic AI quality inspection & defect detection</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px"><button class="btnS" style="font-size:.72rem;padding:.72rem" onclick="toast('📷 Camera opened')">📷 Add Photo</button><button class="btnL" style="font-size:.72rem;padding:.72rem" onclick="toast('✅ Task report submitted!');closeSht('taskRepSht')">✅ Submit Report</button></div>
+    </div>
+  </div>
+
+  <!-- Amendment Sheet -->
+  <div class="sov" id="amdSht" onclick="if(event.target===this)closeSht('amdSht')">
+    <div class="sht"><div class="shdl"></div><div class="sh-t">Raise Amendment</div><div class="sh-s">Design · Specification · Budget — entire team notified</div>
+      <div class="fg"><label class="fl">Amendment Title *</label><input class="inp" id="amdT" placeholder="e.g. Floor plan change — Unit 2A bedroom…"/></div>
+      <div class="fg"><label class="fl">Type</label><select class="inp" id="amdType"><option>Design Amendment</option><option>Specification Change</option><option>Budget Amendment</option><option>Execution Terms</option><option>Material Substitution</option></select></div>
+      <div class="fg"><label class="fl">Description *</label><textarea class="inp" id="amdD" rows="3" placeholder="Describe the change and reason clearly…"></textarea></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
+        <div class="fg"><label class="fl">Cost Impact (₹)</label><input class="inp" id="amdBudget" type="number" placeholder="0 if none"/></div>
+        <div class="fg"><label class="fl">Raised By</label><select class="inp" id="amdBy"><option>Client</option><option>Contractor</option><option>Architect</option><option>Engineer</option></select></div>
+      </div>
+      <button class="btnG" onclick="submitAmd()">📝 Raise & Inform All Team</button>
+    </div>
+  </div>
+
+  <!-- Add Milestone Sheet -->
+  <div class="sov" id="addMsSht" onclick="if(event.target===this)closeSht('addMsSht')">
+    <div class="sht"><div class="shdl"></div><div class="sh-t">Add Milestone</div>
+      <div class="fg"><label class="fl">Milestone Title *</label><input class="inp" id="msT" placeholder="e.g. Roof Slab Complete…"/></div>
+      <div class="fg"><label class="fl">Description</label><input class="inp" id="msD" placeholder="Brief description…"/></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
+        <div class="fg"><label class="fl">Target Date *</label><input class="inp" id="msDt" type="date"/></div>
+        <div class="fg"><label class="fl">Status</label><select class="inp" id="msSt"><option value="pend">Pending</option><option value="active">In Progress</option><option value="done">Completed</option></select></div>
+      </div>
+      <button class="btnP" onclick="submitMs()">🎯 Add to Master Schedule</button>
+    </div>
+  </div>
+
+  <!-- Add Task Sheet -->
+  <div class="sov" id="addTaskSht" onclick="if(event.target===this)closeSht('addTaskSht')">
+    <div class="sht"><div class="shdl"></div><div class="sh-t">Create & Assign Task</div>
+      <div class="fg"><label class="fl">Task Title *</label><input class="inp" id="taskT" placeholder="e.g. Column casting Zone B…"/></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
+        <div class="fg"><label class="fl">Assign To</label><select class="inp"><option>Suresh Patel</option><option>Ramesh Yadav</option><option>Mukesh Singh</option><option>Dinesh Kumar</option><option>Full Team</option></select></div>
+        <div class="fg"><label class="fl">Due Date</label><input class="inp" id="taskDt" type="date"/></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
+        <div class="fg"><label class="fl">Priority</label><select class="inp"><option>High</option><option selected>Medium</option><option>Low</option></select></div>
+        <div class="fg"><label class="fl">Category</label><select class="inp"><option>Structural</option><option>Masonry</option><option>MEP</option><option>Safety</option><option>Finishing</option></select></div>
+      </div>
+      <button class="btnP" onclick="submitTask()">✅ Create & Assign Task</button>
+    </div>
+  </div>
+
+  <!-- New Project Sheet -->
+  <div class="sov" id="newProjSht" onclick="if(event.target===this)closeSht('newProjSht')">
+    <div class="sht"><div class="shdl"></div><div class="sh-t">New Project Briefing</div><div class="sh-s">Type · Design Budget · Specifications · Execution Terms</div>
+      <div class="fg"><label class="fl">Project Name *</label><input class="inp" placeholder="e.g. Patel Residence, Ahmedabad"/></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
+        <div class="fg"><label class="fl">Client</label><select class="inp"><option>CLIENT-1</option><option>CLIENT-2</option><option>New Client</option></select></div>
+        <div class="fg"><label class="fl">Project Type</label><select class="inp"><option>Residential Villa</option><option>Apartment Block</option><option>Commercial Office</option><option>Industrial Shed</option><option>Renovation</option></select></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
+        <div class="fg"><label class="fl">Budget (₹)</label><input class="inp" type="number" placeholder="e.g. 5000000"/></div>
+        <div class="fg"><label class="fl">Area (sqft)</label><input class="inp" placeholder="e.g. 3800"/></div>
+      </div>
+      <div class="fg"><label class="fl">Location</label><input class="inp" placeholder="City, State"/></div>
+      <div class="fg"><label class="fl">Special Notes / Vastu / LEED</label><textarea class="inp" rows="2" placeholder="RERA registration, Vastu compliance, Green building, etc."></textarea></div>
+      <button class="btnP" onclick="toast('✅ Project briefing created! Upload designs next.');closeSht('newProjSht')">🏗️ Create Project Briefing</button>
+    </div>
+  </div>
+
+  <!-- Add Worker Sheet -->
+  <div class="sov" id="addWorkerSht" onclick="if(event.target===this)closeSht('addWorkerSht')">
+    <div class="sht"><div class="shdl"></div><div class="sh-t">Add Team Member</div>
+      <div class="fg"><label class="fl">Full Name *</label><input class="inp" placeholder="Worker's full name"/></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
+        <div class="fg"><label class="fl">Trade / Role</label><select class="inp"><option>Mason (Sr.)</option><option>Mason (Jr.)</option><option>Carpenter</option><option>Steel Fixer</option><option>Plumber</option><option>Electrician</option><option>Helper</option><option>Supervisor</option><option>Safety Officer</option></select></div>
+        <div class="fg"><label class="fl">Daily Wage (₹)</label><input class="inp" type="number" placeholder="850"/></div>
+      </div>
+      <div class="fg"><label class="fl">Phone Number</label><input class="inp" type="tel" placeholder="+91 98xxx xxxxx"/></div>
+      <button class="btnP" onclick="toast('👷 Team member added!');closeSht('addWorkerSht')">👷 Add to Team</button>
+    </div>
+  </div>
+
+  <!-- Vendor Sheet -->
+  <div class="sov" id="vendorSht" onclick="if(event.target===this)closeSht('vendorSht')">
+    <div class="sht"><div class="shdl"></div><div class="sh-t">Register Vendor / Supplier</div>
+      <div class="fg"><label class="fl">Company Name *</label><input class="inp" placeholder="e.g. Venus Steel Pvt. Ltd."/></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
+        <div class="fg"><label class="fl">Category</label><select class="inp"><option>Steel & TMT</option><option>Cement</option><option>Ready Mix Concrete</option><option>Bricks & AAC</option><option>Electrical</option><option>Plumbing</option><option>Paints & Finishing</option><option>Machinery</option></select></div>
+        <div class="fg"><label class="fl">GSTIN</label><input class="inp" placeholder="27AAAAA0000A1Z5"/></div>
+      </div>
+      <div class="fg"><label class="fl">Contact Person & Phone</label><input class="inp" placeholder="Name · +91 98xxx xxxxx"/></div>
+      <div class="fg"><label class="fl">Payment Terms</label><select class="inp"><option>Advance 50%</option><option>30 Days Credit</option><option>On Delivery</option><option>Weekly Settlement</option></select></div>
+      <button class="btnP" onclick="toast('✅ Vendor registered!');closeSht('vendorSht')">🚚 Register Vendor</button>
+    </div>
+  </div>
+
+  <!-- Inventory Sheet -->
+  <div class="sov" id="invSht" onclick="if(event.target===this)closeSht('invSht')">
+    <div class="sht"><div class="shdl"></div><div class="sh-t">Update Inventory</div>
+      <div class="fg"><label class="fl">Material *</label><select class="inp"><option>TMT Steel 12mm</option><option>TMT Steel 16mm</option><option>OPC 53 Cement</option><option>Ready Mix M25</option><option>AAC Blocks 625</option><option>River Sand</option><option>Aggregate 20mm</option><option>Safety Equipment</option></select></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
+        <div class="fg"><label class="fl">Quantity</label><input class="inp" type="number" placeholder="12"/></div>
+        <div class="fg"><label class="fl">Unit</label><select class="inp"><option>MT</option><option>Bags</option><option>CUM</option><option>Nos</option><option>Sqft</option></select></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
+        <div class="fg"><label class="fl">Action</label><select class="inp"><option>IN — Received</option><option>OUT — Consumed</option><option>Return</option></select></div>
+        <div class="fg"><label class="fl">Vendor</label><input class="inp" placeholder="Vendor name"/></div>
+      </div>
+      <button class="btnP" onclick="toast('📦 Inventory updated!');closeSht('invSht')">📦 Update Stock</button>
+    </div>
+  </div>
+
+  <!-- Payment Sheet -->
+  <div class="sov" id="paymentSht" onclick="if(event.target===this)closeSht('paymentSht')">
+    <div class="sht"><div class="shdl"></div><div class="sh-t">Log Payment</div>
+      <div class="fg"><label class="fl">Milestone / Description *</label><input class="inp" placeholder="e.g. Roof Slab milestone payment"/></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
+        <div class="fg"><label class="fl">Amount (₹) *</label><input class="inp" type="number" placeholder="2400000"/></div>
+        <div class="fg"><label class="fl">Date</label><input class="inp" id="payDt" type="date"/></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px">
+        <div class="fg"><label class="fl">Mode</label><select class="inp"><option>NEFT/RTGS</option><option>Cheque</option><option>UPI</option><option>Cash</option></select></div>
+        <div class="fg"><label class="fl">Status</label><select class="inp"><option>Received</option><option>Paid</option><option>Pending</option></select></div>
+      </div>
+      <button class="btnL" onclick="toast('💳 Payment logged!');closeSht('paymentSht')">💳 Log Payment</button>
+    </div>
+  </div>
+
+  <!-- Project Info Sheet -->
+  <div class="sov" id="projInfoSht" onclick="if(event.target===this)closeSht('projInfoSht')">
+    <div class="sht"><div class="shdl"></div><div class="sh-t">Project Initial Details</div>
+      <div style="display:flex;flex-direction:column;font-size:.82rem">
+        <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--bd)"><span style="color:var(--t3);font-family:'Syne',sans-serif;font-size:.68rem;font-weight:700">PROJECT NAME</span><span style="font-weight:600">Greenfield Villa, Pune</span></div>
+        <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--bd)"><span style="color:var(--t3);font-family:'Syne',sans-serif;font-size:.68rem;font-weight:700">CLIENT</span><span>CLIENT-1 BrickOS</span></div>
+        <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--bd)"><span style="color:var(--t3);font-family:'Syne',sans-serif;font-size:.68rem;font-weight:700">TYPE</span><span>Residential G+2</span></div>
+        <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--bd)"><span style="color:var(--t3);font-family:'Syne',sans-serif;font-size:.68rem;font-weight:700">AREA</span><span>3,800 sqft</span></div>
+        <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--bd)"><span style="color:var(--t3);font-family:'Syne',sans-serif;font-size:.68rem;font-weight:700">CONTRACT VALUE</span><span>₹1,20,00,000</span></div>
+        <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--bd)"><span style="color:var(--t3);font-family:'Syne',sans-serif;font-size:.68rem;font-weight:700">START DATE</span><span>Sep 1, 2024</span></div>
+        <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--bd)"><span style="color:var(--t3);font-family:'Syne',sans-serif;font-size:.68rem;font-weight:700">TARGET HANDOVER</span><span>Nov 15, 2025</span></div>
+        <div style="display:flex;justify-content:space-between;padding:10px 0"><span style="color:var(--t3);font-family:'Syne',sans-serif;font-size:.68rem;font-weight:700">MOU STATUS</span><span class="chip c-lime">✓ Signed</span></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /shell -->
+
+<script>
+// ══════════════════════════════════════════════════════════
+//  BrickOS v3.0 — Complete App Logic
+//  Architecture follows InfraBuild flowchart PDF exactly
+// ══════════════════════════════════════════════════════════
+
+// ── EMBER PARTICLES ──────────────────────────────────────
+function spawnEmbers() {
+  const c = document.getElementById('embers');
+  if (!c) return;
+  for (let i = 0; i < 22; i++) {
+    const e = document.createElement('div');
+    e.className = 'ember';
+    const dur = (3 + Math.random() * 5).toFixed(1) + 's';
+    const del = (Math.random() * 6).toFixed(1) + 's';
+    const lft = (Math.random() * 100).toFixed(0) + '%';
+    const dx = ((Math.random() - .5) * 80).toFixed(0) + 'px';
+    e.style.cssText = `--dur:${dur};--del:${del};--lft:${lft};--dx:${dx};opacity:0`;
+    c.appendChild(e);
+  }
+}
+spawnEmbers();
+
+// ── STATE ─────────────────────────────────────────────────
+let role = null;
+let hist = [];
+let curScreen = 'dash';
+
+// ── ROLE PROFILES ─────────────────────────────────────────
+const ROLES = {
+  super: { name:'Super Admin', email:'admin@brickos.in', abbr:'SA', badge:'rb-s', bLabel:'SUPER ADMIN', title:'BrickOS', sub:'Super Admin Dashboard', bg:'linear-gradient(135deg,var(--br2),var(--br))', pCount:'3' },
+  admin: { name:'Vikram Agarwal', email:'vikram@contractor.in', abbr:'VA', badge:'rb-a', bLabel:'ADMIN', title:'BrickOS', sub:'Contractor Dashboard', bg:'linear-gradient(135deg,var(--gld3),var(--gold))', pCount:'3' },
+  client: { name:'Rajesh Sharma', email:'rajesh@client.in', abbr:'RS', badge:'rb-c', bLabel:'CLIENT', title:'My Project', sub:'Client Dashboard', bg:'linear-gradient(135deg,#0a3a28,var(--lime))', pCount:'2' }
+};
+
+function setRole(r) {
+  role = r;
+  const p = ROLES[r];
+  document.getElementById('roleScreen').style.display = 'none';
+  document.getElementById('mainApp').style.display = 'flex';
+  // Profile
+  ['dTitle'].forEach(id => { const e = document.getElementById(id); if(e) e.textContent = p.title; });
+  ['dSub'].forEach(id => { const e = document.getElementById(id); if(e) e.textContent = p.sub; });
+  ['dName'].forEach(id => { const e = document.getElementById(id); if(e) e.textContent = p.name; });
+  ['dRole'].forEach(id => { const e = document.getElementById(id); if(e) e.textContent = p.bLabel + ' · BrickOS'; });
+  const pc = document.getElementById('pCount'); if(pc) pc.textContent = p.pCount;
+  ['dAv','settAv'].forEach(id => { const e = document.getElementById(id); if(e) { e.textContent = p.abbr; e.style.background = p.bg; }});
+  ['settName'].forEach(id => { const e = document.getElementById(id); if(e) e.textContent = p.name; });
+  ['settEmail'].forEach(id => { const e = document.getElementById(id); if(e) e.textContent = p.email; });
+  const sb = document.getElementById('settBadge'); if(sb) sb.innerHTML = `<span class="rbadge ${p.badge}">${p.bLabel}</span>`;
+  // Route to correct dash
+  if (r === 'client') { showScreen('client-dash'); setNav('dash'); }
+  else { showScreen('dash'); setNav('dash'); }
+  renderAll(); updateClock(); setDates();
+}
+
+function returnToRole() {
+  document.getElementById('mainApp').style.display = 'none';
+  document.getElementById('roleScreen').style.display = 'flex';
+  role = null; hist = [];
+}
+
+// ── NAVIGATION ────────────────────────────────────────────
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById('sc-' + name);
+  if (el) { el.classList.add('active'); curScreen = name; }
+}
+function goTo(name) { hist.push(curScreen); showScreen(name); }
+function goBack() {
+  if (hist.length > 0) showScreen(hist.pop());
+  else showScreen(role === 'client' ? 'client-dash' : 'dash');
+}
+function navTo(name) {
+  hist = [];
+  const m = { dash: role === 'client' ? 'client-dash' : 'dash', projects:'projects', reports:'reports', settings:'settings' };
+  showScreen(m[name] || name);
+  setNav(name);
+}
+function setNav(name) {
+  document.querySelectorAll('.ni').forEach(n => n.classList.remove('on'));
+  const el = document.getElementById('ni-' + name);
+  if (el) el.classList.add('on');
+}
+
+// ── SHEETS ────────────────────────────────────────────────
+function openSht(id) { document.getElementById(id).classList.add('open'); }
+function closeSht(id) { document.getElementById(id).classList.remove('open'); }
+
+// ── TOAST ─────────────────────────────────────────────────
+let _tt;
+function toast(msg, err) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.borderColor = err ? 'rgba(216,48,48,.35)' : 'rgba(29,184,122,.3)';
+  t.style.color = err ? '#f08070' : 'var(--lime)';
+  t.classList.add('show');
+  clearTimeout(_tt);
+  _tt = setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ── TOGGLE TABS ───────────────────────────────────────────
+function tgl(btn) {
+  btn.closest('.tglbar').querySelectorAll('.tgl').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+}
+
+// ══════════════════════════════════════════════════════════
+//  DATA LAYER
+// ══════════════════════════════════════════════════════════
+const msData = [
+  {t:'Site Survey & Soil Testing',d:'Geotechnical investigation complete. Results within spec.',dt:'Sep 2, 2024',s:'done'},
+  {t:'Foundation & Plinth Beam',d:'RCC strip foundation M25 concrete. Waterproof membrane applied.',dt:'Oct 18, 2024',s:'done'},
+  {t:'Ground Floor Columns — 18 nos',d:'All cast, cured and cube-tested. 28 MPa achieved.',dt:'Nov 22, 2024',s:'done'},
+  {t:'Floor 1 Slab',d:'Reinforcement placed. Concrete pour in progress.',dt:'Jan 10, 2025',s:'active'},
+  {t:'Floor 2 Slab',d:'Drawings issued. Formwork yet to be erected.',dt:'Jan 22, 2025',s:'pend'},
+  {t:'Brickwork & Plaster — All Floors',d:'AAC blocks as per specification.',dt:'Feb 20, 2025',s:'pend'},
+  {t:'Roof Slab',d:'Final structural slab with waterproofing system.',dt:'Mar 15, 2025',s:'pend'},
+  {t:'MEP Rough-in',d:'Electrical conduits, plumbing, drainage rough-in.',dt:'Apr 5, 2025',s:'pend'},
+  {t:'Flooring & Tiling',d:'Vitrified tiles in living; marble in master bedroom.',dt:'May 10, 2025',s:'pend'},
+  {t:'Painting & Finishing',d:'Two-coat exterior texture; interior emulsion.',dt:'Sep 30, 2025',s:'pend'},
+  {t:'Final QC & Snag List',d:'Joint inspection by QC team and client walkthrough.',dt:'Oct 25, 2025',s:'pend'},
+  {t:'Project Handover',d:'Keys, 10-year warranty certificate, all documentation.',dt:'Nov 15, 2025',s:'pend'},
+];
+
+let workers = [
+  {id:1,n:'Suresh Patel',r:'Mason (Sr.)',s:'P',h:9,w:850,ph:'+91 98001 11111'},
+  {id:2,n:'Ramesh Yadav',r:'Carpenter',s:'P',h:9,w:780,ph:'+91 98001 22222'},
+  {id:3,n:'Mukesh Singh',r:'Steel Fixer',s:'A',h:0,w:820,ph:'+91 98001 33333'},
+  {id:4,n:'Dinesh Kumar',r:'Plumber',s:'P',h:8,w:700,ph:'+91 98001 44444'},
+  {id:5,n:'Rajendra Thakur',r:'Electrician',s:'H',h:5,w:750,ph:'+91 98001 55555'},
+  {id:6,n:'Vijay Sharma',r:'Helper',s:'P',h:9,w:450,ph:'+91 98001 66666'},
+  {id:7,n:'Arun Mishra',r:'Helper',s:'P',h:9,w:450,ph:'+91 98001 77777'},
+  {id:8,n:'Chotu Pandey',r:'Mason (Jr.)',s:'A',h:0,w:600,ph:'+91 98001 88888'},
+  {id:9,n:'Rohit Gupta',r:'Site Supervisor',s:'P',h:9,w:950,ph:'+91 98001 99999'},
+  {id:10,n:'Anjali Verma',r:'Safety Officer',s:'P',h:9,w:800,ph:'+91 98002 10101'},
+];
+
+let iss_open = [
+  {p:'hi',t:'Concrete honeycomb — Column C4',d:'AI scan flagged surface voids. Grouting needed before any loading.',r:'BrickOS AI',dt:'Jan 8, 2025'},
+  {p:'hi',t:'TMT delivery delayed — Floor 2 slab',d:'Steel expected Jan 5 not arrived. 5-day delay risk to schedule.',r:'Site Engineer',dt:'Jan 3, 2025'},
+];
+let iss_prog = [
+  {p:'md',t:'Rebar cover insufficient — Zone B',d:'Cover blocks missing at 6 locations. Correction in progress.',r:'Site Engr',dt:'Jan 7'},
+  {p:'md',t:'Water stagnation — north excavation',d:'Dewatering pump installed. Monitoring.',r:'PM',dt:'Jan 5'},
+  {p:'lo',t:'Safety net — east scaffold',d:'Written notice issued. Work halted on east face.',r:'QC Inspector',dt:'Dec 30'},
+];
+let iss_res = [
+  {p:'lo',t:'Formwork alignment — GF columns',d:'Corrected and re-inspected. Sign-off obtained.',r:'Foreman',dt:'Dec 20'},
+  {p:'md',t:'Welding quality — tie beam joints',d:'Re-welded by certified welder. 3rd-party test passed.',r:'QC',dt:'Dec 15'},
+];
+
+let amendments = [
+  {t:'Floor plan layout change — Unit 2A',type:'Design Amendment',d:'Client requests bedroom 2 enlarged by 50sqft. Wall relocation required.',by:'Client',budget:'+₹45,000',s:'pend',dt:'Jan 7, 2025'},
+  {t:'AAC Block grade 625→650',type:'Specification Change',d:'Engineer recommends denser block for better thermal insulation.',by:'Contractor',budget:'+₹18,000',s:'pend',dt:'Jan 5, 2025'},
+  {t:'Additional CCTV — 6 points',type:'Execution Terms',d:'Client requests 6 extra CCTV points beyond original scope.',by:'Client',budget:'+₹32,000',s:'review',dt:'Jan 3, 2025'},
+];
+
+let tasks = [
+  {t:'Column casting — Zone B (5 nos)',a:'Suresh Patel',due:'Today',cat:'Structural',p:'hi',done:false},
+  {t:'Rebar fixing — Floor 2 East wing',a:'Mukesh Singh',due:'Today',cat:'Structural',p:'hi',done:false},
+  {t:'Brickwork — GF North wall',a:'Ramesh Yadav',due:'Jan 10',cat:'Masonry',p:'md',done:false},
+  {t:'Site safety audit walkthrough',a:'Anjali Verma',due:'Jan 10',cat:'Safety',p:'md',done:false},
+  {t:'Material delivery check — TMT 16mm',a:'Rohit Gupta',due:'Jan 11',cat:'Materials',p:'lo',done:false},
+  {t:'Electrical conduit marking — Floor 1',a:'Rajendra Thakur',due:'Jan 12',cat:'MEP',p:'md',done:false},
+  {t:'Plumbing rough-in — bathroom zones',a:'Dinesh Kumar',due:'Jan 14',cat:'MEP',p:'lo',done:false},
+  {t:'Concrete cube testing — batch 4',a:'Site Engineer',due:'Jan 9',cat:'QC',p:'hi',done:true},
+  {t:'Attendance filing — Week 1 Jan',a:'Rohit Gupta',due:'Jan 8',cat:'Admin',p:'lo',done:true},
+];
+
+const vendors = [
+  {n:'Venus Steel Pvt. Ltd.',cat:'Steel & TMT',contact:'Rajan Shah · +91 98765 12345',gstin:'27AAAAA0000A1Z5',st:'active',orders:4},
+  {n:'UltraTech Cement — Pune Dist.',cat:'Cement & Concrete',contact:'Priya M · +91 98765 23456',gstin:'24BBBBB1111B2Y4',st:'active',orders:8},
+  {n:'Buildcon Ready Mix Pune',cat:'Ready Mix Concrete',contact:'Ankit R · +91 98765 34567',gstin:'27CCCCC2222C3X3',st:'active',orders:6},
+  {n:'KEC International (MEP)',cat:'Electrical & Plumbing',contact:'Sanjay K · +91 98765 45678',gstin:'27DDDDD3333D4W2',st:'pend',orders:0},
+  {n:'Shalimar Paints Ltd.',cat:'Paints & Finishing',contact:'Neha T · +91 98765 56789',gstin:'09EEEEE4444E5V1',st:'active',orders:2},
+];
+
+const inventory = [
+  {m:'TMT Steel 12mm',qty:'8.5 MT',st:'ok',dt:'Jan 8'},
+  {m:'OPC 53 Cement',qty:'145 Bags',st:'low',dt:'Jan 7'},
+  {m:'Ready Mix Concrete M25',qty:'0 CUM',st:'out',dt:'Jan 5'},
+  {m:'AAC Blocks 625',qty:'1,850 Nos',st:'ok',dt:'Jan 6'},
+  {m:'River Sand',qty:'22 Tons',st:'ok',dt:'Jan 4'},
+  {m:'Aggregate 20mm',qty:'18 Tons',st:'low',dt:'Jan 3'},
+  {m:'Steel Formwork',qty:'12 Sets',st:'ok',dt:'Dec 28'},
+  {m:'Safety Equipment',qty:'28 Sets',st:'ok',dt:'Dec 25'},
+];
+
+const payments = [
+  {ms:'Agreement Signing (10%)',due:'Sep 5, 2024',amt:1200000,s:'paid',rcpt:'RCP-001'},
+  {ms:'Foundation Complete (20%)',due:'Oct 20, 2024',amt:2400000,s:'paid',rcpt:'RCP-002'},
+  {ms:'Plinth Beam Complete (20%)',due:'Nov 25, 2024',amt:2400000,s:'paid',rcpt:'RCP-003'},
+  {ms:'Roof Slab (20%)',due:'Mar 15, 2025',amt:2400000,s:'upcoming',rcpt:''},
+  {ms:'Plaster Complete (15%)',due:'Jun 10, 2025',amt:1800000,s:'upcoming',rcpt:''},
+  {ms:'Handover (15%)',due:'Nov 15, 2025',amt:1800000,s:'upcoming',rcpt:''},
+];
+
+let allDocs = [
+  {i:'📐',n:'Structural Drawings Rev 3',t:'PDF',sz:'4.2 MB',dt:'Dec 10, 2024'},
+  {i:'📋',n:'Construction Contract',t:'PDF',sz:'1.1 MB',dt:'Sep 1, 2024'},
+  {i:'📜',n:'MOU — CLIENT-1 BrickOS',t:'PDF',sz:'0.6 MB',dt:'Aug 20, 2024'},
+  {i:'🏛️',n:'RERA Certificate',t:'PDF',sz:'0.8 MB',dt:'Aug 22, 2024'},
+  {i:'📊',n:'BOQ — Revised Jan 2025',t:'Excel',sz:'2.3 MB',dt:'Jan 2, 2025'},
+  {i:'🗺️',n:'Site Layout Plan',t:'PDF',sz:'6.1 MB',dt:'Sep 5, 2024'},
+  {i:'🧪',n:'Soil Test Report',t:'PDF',sz:'3.4 MB',dt:'Aug 30, 2024'},
+  {i:'⚡',n:'Electrical Layout Drawings',t:'PDF',sz:'2.8 MB',dt:'Oct 15, 2024'},
+  {i:'🔧',n:'Plumbing Schematic',t:'PDF',sz:'1.9 MB',dt:'Oct 18, 2024'},
+  {i:'🔐',n:'Product Warranties Pack',t:'PDF',sz:'5.2 MB',dt:'—'},
+];
+
+const kb = [
+  {cat:'Concrete',ic:'🧱',t:'RCC Standards — IS 456:2000',d:'Grade selection, W/C ratio, curing, cube testing. M25 for columns, M20 for slabs.',bg:'rgba(200,52,28,.12)'},
+  {cat:'Steel',ic:'⚙️',t:'Reinforcement — IS 1786',d:'TMT bar grades, lap lengths, cover requirements, bending schedules.',bg:'rgba(212,150,10,.1)'},
+  {cat:'Safety',ic:'⛑️',t:'Site Safety Protocols — IS 4130',d:'PPE, scaffold safety, excavation, fire prevention. Daily safety audit.',bg:'rgba(216,48,48,.1)'},
+  {cat:'Masonry',ic:'🏠',t:'Brickwork & Plastering Standards',d:'AAC block installation, mortar ratios, plaster thickness, curing period.',bg:'rgba(29,184,122,.1)'},
+  {cat:'Electrical',ic:'⚡',t:'Electrical Standards — IS 732',d:'Conduit sizing, earthing, circuit protection, load calculation.',bg:'rgba(30,127,212,.1)'},
+  {cat:'Waterproofing',ic:'💧',t:'Waterproofing Systems',d:'Terrace, basement, bathroom — systems, application methods, testing.',bg:'rgba(30,127,212,.08)'},
+  {cat:'QC',ic:'✅',t:'Quality Control Checklists',d:'Stage-wise QC from foundation to finishing. Sign-off requirements.',bg:'rgba(29,184,122,.08)'},
+  {cat:'Finishing',ic:'🎨',t:'Flooring & Tiling Standards',d:'Tile bedding, grouting, vitrified vs ceramic, marble installation.',bg:'rgba(200,52,28,.08)'},
+];
+
+const handoverItems = [
+  {t:'Final structural QC inspection',done:true},
+  {t:'MEP system commissioning & testing',done:true},
+  {t:'Snag list preparation & resolution',done:true},
+  {t:'All product warranties collected',done:false},
+  {t:'As-built drawings prepared',done:false},
+  {t:'RERA completion certificate obtained',done:true},
+  {t:'Electrical load certificate',done:false},
+  {t:'Plumbing pressure test report',done:false},
+  {t:'Fire NOC certificate',done:false},
+  {t:'Painting & finishing touch-ups complete',done:false},
+  {t:'Site cleanup complete',done:false},
+  {t:'Client walkthrough & key handover',done:false},
+];
+
+const notifs = [
+  {col:'var(--err)',txt:'<strong>🤖 AI Alert</strong> — Honeycomb on Column C4. Immediate inspection.',time:'2 hrs',unread:true},
+  {col:'var(--gold)',txt:'<strong>📝 Amendment</strong> — CLIENT-1 raised floor plan change. Review needed.',time:'4 hrs',unread:true},
+  {col:'var(--lime)',txt:'<strong>💳 Payment Received</strong> — Plinth milestone ₹24,00,000 confirmed.',time:'6 hrs',unread:true},
+  {col:'var(--sky)',txt:'<strong>📸 Task Report</strong> — Zone B column casting done. 18 photos uploaded.',time:'8 hrs',unread:true},
+  {col:'var(--gold)',txt:'<strong>📦 Material Delivery</strong> — 12 MT TMT from Venus Steel received.',time:'10 hrs',unread:true},
+  {col:'var(--t3)',txt:'<strong>👷 Attendance Filed</strong> — 24 present / 4 absent for today.',time:'Yesterday',unread:false},
+  {col:'var(--t3)',txt:'<strong>📋 Weekly Report</strong> — Auto-generated report ready for download.',time:'Yesterday',unread:false},
+  {col:'var(--t3)',txt:'<strong>🚚 Vendor Registered</strong> — KEC International approved & onboarded.',time:'2 days ago',unread:false},
+];
+
+let chatMsgs = [
+  {from:'Vikram A.',a:'VA',text:'Good morning! Concrete pour for Zone B starts 08:30. All supervisors please be present.',time:'08:15',me:false},
+  {from:'Suresh P.',a:'SP',text:'Confirmed. Shuttering ready. Cube moulds prepared.',time:'08:20',me:false},
+  {from:'You',a:'ME',text:'Quality inspector arrives at 08:15. Cube test immediately after pour.',time:'08:22',me:true},
+  {from:'Anjali V.',a:'AV',text:'✅ Safety nets checked. All workers have PPE. Ready.',time:'08:25',me:false},
+  {from:'You',a:'ME',text:'Good. Upload photos every 30 mins during pour for live tracking.',time:'08:28',me:true},
+  {from:'Rohit G.',a:'RG',text:'AI flagged honeycomb on Column C4 from yesterday. Grouting scheduled tomorrow.',time:'10:45',me:false},
+];
+
+// ══════════════════════════════════════════════════════════
+//  RENDER FUNCTIONS
+// ══════════════════════════════════════════════════════════
+
+function renderMs() {
+  const el = document.getElementById('msList'); if (!el) return;
+  const ic = {done:'✓',active:'●',pend:'○',delay:'!'};
+  el.innerHTML = msData.map(m => `
+    <div class="mr">
+      <div class="mdot ${m.s==='done'?'md-done':m.s==='active'?'md-active':m.s==='delay'?'md-delay':'md-pend'}">${ic[m.s]||'○'}</div>
+      <div style="flex:1"><div class="mt-">${m.t}</div><div class="md-">${m.d}</div></div>
+      <div class="mdate ${m.s==='done'?'mok':'mdue'}">${m.s==='done'?'✓ '+m.dt:m.dt}</div>
+    </div>`).join('');
+}
+
+function renderWorkers() {
+  const el = document.getElementById('workerList'); if (!el) return;
+  let P=0,A=0,H=0;
+  workers.forEach(w => { if(w.s==='P')P++; else if(w.s==='A')A++; else H++; });
+  ['wP','wA','wH'].forEach((id,i) => { const e=document.getElementById(id); if(e) e.textContent=[P,A,H][i]; });
+  const sub = document.getElementById('teamSub');
+  if (sub) sub.textContent = `${P} Present · ${A} Absent · ${H} Half Day`;
+  const ini = n => n.split(' ').map(x=>x[0]).join('').slice(0,2);
+  el.innerHTML = workers.map(w => `
+    <div class="wcrd">
+      <div class="av" style="width:36px;height:36px;font-size:.7rem;border-radius:8px;background:linear-gradient(135deg,var(--br2),var(--br))">${ini(w.n)}</div>
+      <div style="flex:1">
+        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:.8rem">${w.n}</div>
+        <div style="font-size:.7rem;color:var(--t3)">${w.r} · ${w.h>0?w.h+' hrs · ₹'+(w.s==='H'?Math.round(w.w/2):w.w):'—'}</div>
+      </div>
+      <div class="att-btn att-${w.s}" onclick="cycleAtt(${w.id})">${w.s}</div>
+    </div>`).join('');
+}
+
+function cycleAtt(id) {
+  const w = workers.find(x=>x.id===id); if(!w) return;
+  const cy = {P:'A',A:'H',H:'P'};
+  w.s = cy[w.s];
+  w.h = w.s==='P'?9:w.s==='H'?5:0;
+  renderWorkers();
+  toast(`👷 ${w.n} → ${w.s==='P'?'Present':w.s==='A'?'Absent':'Half Day'}`);
+}
+
+function renderIssues() {
+  const pC = {hi:'c-red',md:'c-gold',lo:'c-lime'};
+  const pL = {hi:'🔴 HIGH',md:'🟡 MED',lo:'🟢 LOW'};
+  const pCl = {hi:'hi',md:'md',lo:'lo'};
+  const render = (data, id) => {
+    const el = document.getElementById(id); if (!el) return;
+    el.innerHTML = data.map(is => `
+      <div class="iss ${pCl[is.p]}" onclick="toast('Issue: ${is.t.replace(/'/g,'`')}')">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px">
+          <div class="iss-t" style="flex:1;padding-right:8px">${is.t}</div>
+          <span class="chip ${pC[is.p]}">${pL[is.p]}</span>
+        </div>
+        <div class="iss-d">${is.d}</div>
+        <div style="display:flex;gap:7px;flex-wrap:wrap">
+          <span class="chip c-gray">👤 ${is.r}</span>
+          <span class="chip c-gray">📅 ${is.dt}</span>
+        </div>
+      </div>`).join('');
+  };
+  render(iss_open,'issOpen');
+  render(iss_prog,'issProg');
+  render(iss_res,'issRes');
+}
+
+function renderAmendments() {
+  const el = document.getElementById('amdList'); if (!el) return;
+  el.innerHTML = amendments.map(a => `
+    <div class="amd" onclick="toast('Amend: ${a.t.replace(/'/g,'`')}')">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px">
+        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:.8rem;flex:1;padding-right:8px">${a.t}</div>
+        <span class="chip ${a.s==='review'?'c-sky':'c-gold'}">${a.s==='review'?'Review':'Pending'}</span>
+      </div>
+      <div style="font-size:.7rem;color:var(--t3);margin-bottom:5px">${a.d}</div>
+      <div style="display:flex;gap:7px;flex-wrap:wrap">
+        <span class="chip c-gray">🏷 ${a.type}</span>
+        <span class="chip c-gray">👤 ${a.by}</span>
+        <span class="chip c-gold">${a.budget}</span>
+        <span class="chip c-gray">📅 ${a.dt}</span>
+      </div>
+    </div>`).join('');
+}
+
+function renderTasks() {
+  const el = document.getElementById('taskList'); if (!el) return;
+  const pC = {hi:'c-red',md:'c-gold',lo:'c-lime'};
+  const catBg = {Structural:'rgba(200,52,28,.1)',Masonry:'rgba(212,150,10,.08)',MEP:'rgba(29,184,122,.08)',Safety:'rgba(216,48,48,.08)',QC:'rgba(212,150,10,.1)',Admin:'rgba(255,255,255,.05)',Materials:'rgba(212,150,10,.08)',Finishing:'rgba(29,184,122,.06)'};
+  el.innerHTML = tasks.map((t,i) => `
+    <div class="tcrd ${t.done?'done':''}" onclick="toggleTask(${i})">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px">
+        <div style="display:flex;gap:8px;flex:1">
+          <div style="width:20px;height:20px;border-radius:50%;border:2px solid ${t.done?'var(--lime)':'var(--bd2)'};background:${t.done?'rgba(29,184,122,.2)':'transparent'};display:flex;align-items:center;justify-content:center;font-size:.65rem;flex-shrink:0;margin-top:1px;transition:all .2s">${t.done?'✓':''}</div>
+          <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:.8rem;${t.done?'text-decoration:line-through;color:var(--t3)':''}">${t.t}</div>
+        </div>
+        <span class="chip ${pC[t.p]}" style="margin-left:8px">${t.p.toUpperCase()}</span>
+      </div>
+      <div style="display:flex;gap:7px;flex-wrap:wrap;padding-left:28px">
+        <span class="chip c-gray">👤 ${t.a}</span>
+        <span class="chip" style="background:${catBg[t.cat]||'rgba(255,255,255,.05)'};color:var(--t2);border:1px solid var(--bd)">${t.cat}</span>
+        <span class="chip ${t.due==='Today'?'c-red':'c-gray'}">📅 ${t.due}</span>
+      </div>
+    </div>`).join('');
+}
+
+function toggleTask(i) {
+  tasks[i].done = !tasks[i].done;
+  renderTasks();
+  toast(tasks[i].done ? '✅ Task marked complete!' : '↩️ Task re-opened');
+}
+
+function renderVendors() {
+  const el = document.getElementById('vendorList'); if (!el) return;
+  el.innerHTML = vendors.map(v => `
+    <div class="vcrd" onclick="toast('${v.n.replace(/'/g,'`')} · ${v.contact.replace(/'/g,'`')}')">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px">
+        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:.82rem">${v.n}</div>
+        <span class="chip ${v.st==='active'?'c-lime':'c-gold'}">${v.st==='active'?'Active':'Pending'}</span>
+      </div>
+      <div style="font-size:.72rem;color:var(--t3);margin-bottom:6px">📦 ${v.cat} · 📋 ${v.orders} orders</div>
+      <div style="display:flex;gap:7px;align-items:center">
+        <span class="chip c-gray" style="overflow:hidden;text-overflow:ellipsis;max-width:180px">📞 ${v.contact}</span>
+        <button class="chip c-sky" style="cursor:pointer;margin-left:auto" onclick="event.stopPropagation();toast('📋 Procurement opened for ${v.n.replace(/'/g,'`')}')">Procure</button>
+      </div>
+    </div>`).join('');
+}
+
+function renderInventory() {
+  const el = document.getElementById('invList'); if (!el) return;
+  const sC = {ok:'c-lime',low:'c-gold',out:'c-red'};
+  const sL = {ok:'OK',low:'LOW',out:'OUT'};
+  el.innerHTML = inventory.map(i => `
+    <div class="li" onclick="openSht('invSht')">
+      <div class="li-ic" style="background:rgba(200,52,28,.1)">📦</div>
+      <div class="li-c"><div class="li-t">${i.m}</div><div class="li-s">${i.qty} · Updated ${i.dt}</div></div>
+      <span class="chip ${sC[i.st]}">${sL[i.st]}</span>
+    </div>`).join('');
+}
+
+function renderPayments() {
+  const el = document.getElementById('payList'); if (!el) return;
+  const fmt = n => '₹' + Number(n).toLocaleString('en-IN');
+  el.innerHTML = payments.map(p => `
+    <div class="pcrd">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:7px">
+        <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:.8rem;flex:1;padding-right:8px">${p.ms}</div>
+        <span class="chip ${p.s==='paid'?'c-lime':p.s==='upcoming'?'c-gold':'c-red'}">${p.s.toUpperCase()}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:1.25rem;color:${p.s==='paid'?'var(--lime)':'var(--gold)'}">${fmt(p.amt)}</div>
+          <div style="font-size:.68rem;color:var(--t3)">Due: ${p.due}${p.rcpt?' · Rcpt: '+p.rcpt:''}</div>
+        </div>
+        ${p.s!=='paid'?`<button class="chip c-sky" style="cursor:pointer" onclick="toast('💳 Payment gateway — Razorpay integration')">Pay Now</button>`:'<span style="color:var(--lime);font-size:.8rem">✓ Paid</span>'}
+      </div>
+    </div>`).join('');
+}
+
+function renderDocs(data) {
+  const el = document.getElementById('docList'); if (!el) return;
+  const bg = {PDF:'rgba(200,52,28,.12)',Excel:'rgba(29,184,122,.1)',Word:'rgba(30,127,212,.1)'};
+  el.innerHTML = (data || allDocs).map(d => `
+    <div class="dcard" onclick="toast('↓ Downloading: ${d.n.replace(/'/g,'`')}')">
+      <div style="width:40px;height:44px;border-radius:var(--r1);background:${bg[d.t]||'rgba(255,255,255,.06)'};display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0">${d.i}</div>
+      <div style="flex:1;min-width:0"><div style="font-family:'Syne',sans-serif;font-weight:700;font-size:.8rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${d.n}</div><div style="font-size:.7rem;color:var(--t3);margin-top:.1rem">${d.t} · ${d.sz} · ${d.dt}</div></div>
+      <span class="chip c-gray" style="font-size:.56rem">↓</span>
+    </div>`).join('');
+}
+
+function filterDocs(q) { renderDocs(allDocs.filter(d => d.n.toLowerCase().includes(q.toLowerCase()))); }
+
+function renderKB() {
+  const el = document.getElementById('kbList'); if (!el) return;
+  el.innerHTML = kb.map(k => `
+    <div class="kcard" onclick="toast('📚 ${k.t.replace(/'/g,'`')}')">
+      <div style="display:flex;gap:11px;align-items:flex-start">
+        <div style="width:44px;height:44px;border-radius:var(--r2);background:${k.bg};display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0">${k.ic}</div>
+        <div>
+          <div style="display:flex;align-items:center;gap:7px;margin-bottom:3px">
+            <span class="chip c-gray" style="font-size:.56rem">${k.cat}</span>
+          </div>
+          <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:.8rem;margin-bottom:3px">${k.t}</div>
+          <div style="font-size:.72rem;color:var(--t3);line-height:1.45">${k.d}</div>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function renderHandover() {
+  const el = document.getElementById('handoverList'); if (!el) return;
+  el.innerHTML = handoverItems.map((item,i) => `
+    <div class="hv-item" onclick="toggleHv(${i})">
+      <div class="hv-chk ${item.done?'done':''}">${item.done?'✓':''}</div>
+      <div style="flex:1;font-family:'Syne',sans-serif;font-size:.8rem;font-weight:${item.done?'400':'700'};${item.done?'text-decoration:line-through;color:var(--t3)':''}">${item.t}</div>
+      <span class="chip ${item.done?'c-lime':'c-gray'}">${item.done?'Done':'Pending'}</span>
+    </div>`).join('');
+}
+
+function toggleHv(i) {
+  handoverItems[i].done = !handoverItems[i].done;
+  renderHandover();
+  toast(handoverItems[i].done ? '✅ Item complete!' : '↩️ Re-opened');
+}
+
+function renderNotifs() {
+  const el = document.getElementById('notifList'); if (!el) return;
+  const today = notifs.filter(n => n.time.includes('hrs'));
+  const older = notifs.filter(n => !n.time.includes('hrs'));
+  const mk = (data, label) => `
+    <div class="slbl">${label}</div>
+    <div class="card" style="margin:0 14px 12px;border-radius:var(--r2)">
+      ${data.map((n,i) => `
+        <div class="notif">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:4px;margin-top:3px;flex-shrink:0">
+            <div style="width:9px;height:9px;border-radius:50%;background:${n.col};${n.unread?'':'opacity:.4'}"></div>
+            <div style="width:1px;flex:1;background:var(--bd);min-height:16px"></div>
+          </div>
+          <div style="flex:1">
+            <div class="notif-txt">${n.txt}</div>
+            <div class="notif-time">${n.time}</div>
+          </div>
+        </div>`).join('')}
+    </div>`;
+  el.innerHTML = mk(today, 'Today') + mk(older, 'Earlier');
+}
+
+function renderChat() {
+  const el = document.getElementById('msgList'); if (!el) return;
+  el.innerHTML = chatMsgs.map(m => `
+    <div class="msg ${m.me?'me':''}">
+      ${!m.me?`<div class="av" style="width:30px;height:30px;font-size:.58rem;background:linear-gradient(135deg,var(--br2),var(--br))">${m.a}</div>`:''}
+      <div>
+        ${!m.me?`<div style="font-family:'Syne',sans-serif;font-size:.58rem;font-weight:700;color:var(--t3);margin-bottom:2px;padding-left:2px">${m.from}</div>`:''}
+        <div class="bubble ${m.me?'b-me':'b-from'}">${m.text}</div>
+        <div style="font-family:'Space Mono',monospace;font-size:.56rem;color:var(--t3);margin-top:2px;${m.me?'text-align:right':''}">${m.time}</div>
+      </div>
+      ${m.me?`<div class="av" style="width:30px;height:30px;font-size:.58rem;background:linear-gradient(135deg,#0a3a28,var(--lime))">ME</div>`:''}
+    </div>`).join('');
+  const ca = document.getElementById('chatArea'); if (ca) ca.scrollTop = ca.scrollHeight;
+}
+
+function sendMsg() {
+  const inp = document.getElementById('chatInp'); if (!inp || !inp.value.trim()) return;
+  const now = new Date();
+  const time = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+  chatMsgs.push({from:'You',a:'ME',text:inp.value.trim(),time,me:true});
+  inp.value = '';
+  renderChat();
+  setTimeout(() => {
+    const replies = ['👍 Got it! Will update.','On it right away.','Checking and report back in 5 mins.','✅ Done. Photos uploaded.','Understood, will action immediately.'];
+    const names = [{from:'Vikram A.',a:'VA'},{from:'Rohit G.',a:'RG'},{from:'Suresh P.',a:'SP'}];
+    const nm = names[Math.floor(Math.random()*names.length)];
+    const t2 = new Date();
+    chatMsgs.push({...nm, text:replies[Math.floor(Math.random()*replies.length)], time:t2.getHours().toString().padStart(2,'0')+':'+t2.getMinutes().toString().padStart(2,'0'), me:false});
+    renderChat();
+  }, 900);
+}
+
+// ── FORM SUBMISSIONS ──────────────────────────────────────
+function submitIssue() {
+  const t = document.getElementById('issT').value.trim();
+  if (!t) { toast('⚠️ Enter issue title', true); return; }
+  const p = document.getElementById('issP').value;
+  const d = document.getElementById('issD').value.trim() || 'No description.';
+  iss_open.unshift({p, t, d, r:'You', dt: new Date().toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})});
+  renderIssues();
+  closeSht('issueSht');
+  ['issT','issD','issL'].forEach(id => { const e=document.getElementById(id); if(e) e.value=''; });
+  toast('✅ Issue raised & entire team notified!');
+}
+
+function submitAmd() {
+  const t = document.getElementById('amdT').value.trim();
+  if (!t) { toast('⚠️ Enter amendment title', true); return; }
+  const type = document.getElementById('amdType').value;
+  const d = document.getElementById('amdD').value.trim() || 'No description.';
+  const by = document.getElementById('amdBy').value;
+  const budget = document.getElementById('amdBudget').value;
+  amendments.unshift({t, type, d, by, budget: budget ? '+₹'+Number(budget).toLocaleString('en-IN') : 'No cost impact', s:'pend', dt:new Date().toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})});
+  renderAmendments();
+  closeSht('amdSht');
+  ['amdT','amdD','amdBudget'].forEach(id => { const e=document.getElementById(id); if(e) e.value=''; });
+  toast('📝 Amendment raised & all team informed!');
+}
+
+function submitMs() {
+  const t = document.getElementById('msT').value.trim();
+  const dt = document.getElementById('msDt').value;
+  if (!t || !dt) { toast('⚠️ Fill title and date', true); return; }
+  const d = document.getElementById('msD').value.trim() || 'Added to schedule.';
+  const s = document.getElementById('msSt').value;
+  msData.push({t, d, dt: new Date(dt).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}), s});
+  renderMs();
+  closeSht('addMsSht');
+  ['msT','msD'].forEach(id => { const e=document.getElementById(id); if(e) e.value=''; });
+  toast('🎯 Milestone added to master schedule!');
+}
+
+function submitTask() {
+  const t = document.getElementById('taskT').value.trim();
+  if (!t) { toast('⚠️ Enter task title', true); return; }
+  const dt = document.getElementById('taskDt').value;
+  const fmt = dt ? new Date(dt).toLocaleDateString('en-IN',{day:'numeric',month:'short'}) : 'TBD';
+  tasks.unshift({t, a:'Assigned', due:fmt, cat:'General', p:'md', done:false});
+  renderTasks();
+  closeSht('addTaskSht');
+  document.getElementById('taskT').value = '';
+  toast('✅ Task created & assigned!');
+}
+
+// ── CLOCK ─────────────────────────────────────────────────
+function updateClock() {
+  const now = new Date();
+  const el = document.getElementById('sTime');
+  if (el) el.textContent = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+}
+setInterval(updateClock, 30000);
+
+function setDates() {
+  const now = new Date();
+  const h = now.getHours();
+  const g = document.getElementById('greeting');
+  if (g) g.textContent = (h<12?'Good Morning 🌤':h<17?'Good Afternoon ☀️':'Good Evening 🌙');
+  const td = document.getElementById('teamDate');
+  if (td) td.textContent = now.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  const today = now.toISOString().split('T')[0];
+  ['payDt','msDt','taskDt'].forEach(id => { const e=document.getElementById(id); if(e) e.value=today; });
+}
+
+// ── COUNTER ANIMATIONS ────────────────────────────────────
+function animCounters() {
+  document.querySelectorAll('[data-count]').forEach(el => {
+    const target = parseInt(el.dataset.count);
+    const sfx = el.dataset.sfx || '';
+    let cur = 0; const step = Math.max(1, target/60);
+    const timer = setInterval(() => {
+      cur = Math.min(cur+step, target);
+      el.textContent = Math.floor(cur) + sfx;
+      if (cur >= target) clearInterval(timer);
+    }, 16);
+  });
+}
+
+// ── RENDER ALL ────────────────────────────────────────────
+function renderAll() {
+  renderMs(); renderWorkers(); renderIssues(); renderAmendments();
+  renderTasks(); renderVendors(); renderInventory(); renderPayments();
+  renderDocs(); renderKB(); renderHandover(); renderNotifs(); renderChat();
+  setTimeout(animCounters, 500);
+}
+
+// ── iOS KEYBOARD FIX ──────────────────────────────────────
+document.addEventListener('focusin', e => {
+  if (e.target.matches('input,select,textarea'))
+    e.target.scrollIntoView({behavior:'smooth', block:'center'});
+});
+</script>
+</body>
+</html>
